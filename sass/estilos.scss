@@ -38,6 +38,22 @@ footer p {
   color: large;
   text-align: center;
 }
-.hola {
-  border: #000000;
+.imagen-libre-1 {
+    position: relative; /* O absolute */
+    transform: translate(0px, 0px); /* Desplaza 50px a la derecha y 100px hacia abajo */
+}
+.imagen-libre-2 {
+    position: relative; /* O absolute */
+    transform: translate(125px, 45px); /* Desplaza 50px a la derecha y 100px hacia abajo */
+}
+.imagen-libre-3 {
+    position: relative; /* O absolute */
+    transform: translate(-60px, 70px); /* Desplaza 50px a la derecha y 100px hacia abajo */
+}
+/* .texto-centro{
+  margin-bottom: 15%;
+} */
+.bordes{
+  background-color: #ffffff;
+  border: 5px white;
 }

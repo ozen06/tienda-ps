@@ -1,42 +1,43 @@
-/*
- * Práctica: Renderizar listas con template literals
- * 
- * Completa las funciones para crear, insertar y eliminar nodos en el DOM.
- * Usa template literals para generar el contenido HTML.
- * 
- * Entrada: Un array de objetos con { title, description }.
- * Salida: Renderizar la lista en el contenedor con id 'article-list'.
- */
 
-function renderList(articles) {
-  // TODO: Crear un DocumentFragment
-  const documento = new DocumentFragment();
-  // TODO: Por cada artículo, crear un <li> con contenido usando template literals
-  const articlePadre = document.getElementById("article-list")
-  articles.forEach(element => {
-    let html = `
-    <li class="article-item">
-      <h3>${element.title}</h3>
-      <p>${element.description}</p>
-    </li>
-  `;
-  const auxiliar = document.createElement('div');
-  auxiliar.innerHTML = html;
-  const NodoRealLi = auxiliar.firstElementChild;
-  documento.appendChild(NodoRealLi)
-  });
-  // TODO: Vaciar el contenedor y agregar el DocumentFragment
-  articlePadre.innerHTML = "";
-  return articlePadre.appendChild(documento)
-}
+//Cambio de texto central cada 5s. 
 
-function updateList(newArticles) {
-  // TODO: Eliminar todos los nodos hijos del contenedor
-  const articlePadre = document.getElementById("article-list")
-  articlePadre.innerHTML = "";
-  // TODO: Renderizar la nueva lista
-  return renderList(newArticles)
-}
+let texto = document.getElementsByClassName("texto-centro")
+let textoNuevo = ["Hola", "Q onda"];
+setInterval(() => {
+  let posicion = 0;
+  if (texto[0]) {
+    if (texto[0].innerText === textoNuevo[posicion]) {
+      texto[0].innerText = textoNuevo[posicion + 1];
+    } else if (texto[0].innerText === textoNuevo[posicion + 1]) {
+      texto[0].innerText = "No es una simple tienda, es una experiencia.";
+    } else {
+      texto[0].innerText = textoNuevo[posicion];
+    }
+  }
+}, 5000);
 
-// Exportar funciones para pruebas
-module.exports = { renderList, updateList };
+//Agrandar imagenes index dinamicamente.
+
+// This handler will be executed every time the cursor
+// is moved over a different list item
+const contenedor = document.querySelector("div");
+const personajes = ["ellie", "kratos", "crash", "sackboy"];
+contenedor.addEventListener("mouseover", () => {
+  const elemento1 = String(event.target.className);
+  for (const pj of personajes){
+    if (elemento1.indexOf(pj) > 0){
+    const imagenes = Array.from(contenedor.children).find((elemento) => elemento.classList.contains(pj));
+    imagenes.classList.add('w-50');
+  }
+  }
+});
+/* contenedor.addEventListener("mouseenter", () => {
+  const elemento1 = String(event.target);
+  console.log(elemento1)
+  for (const pj of personajes){
+    if (elemento1.indexOf(pj) > 0){
+    const imagenes = Array.from(contenedor.children).find((elemento) => elemento.classList.contains(pj));
+    console.log(imagenes)
+  }
+  }
+}); */
