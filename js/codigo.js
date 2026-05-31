@@ -1,4 +1,3 @@
-
 //Cambio de texto central cada 5s. 
 
 let texto = document.getElementsByClassName("texto-centro")
@@ -14,30 +13,30 @@ setInterval(() => {
       texto[0].innerText = textoNuevo[posicion];
     }
   }
-}, 5000);
+}, 2000);
 
 //Agrandar imagenes index dinamicamente.
 
-// This handler will be executed every time the cursor
-// is moved over a different list item
 const contenedor = document.querySelector("div");
 const personajes = ["ellie", "kratos", "crash", "sackboy"];
+
 contenedor.addEventListener("mouseover", () => {
   const elemento1 = String(event.target.className);
-  for (const pj of personajes){
-    if (elemento1.indexOf(pj) > 0){
-    const imagenes = Array.from(contenedor.children).find((elemento) => elemento.classList.contains(pj));
-    imagenes.classList.add('w-50');
+  for (const pj of personajes) {
+    if (elemento1.indexOf(pj) > 0) {
+      const imagenes = Array.from(contenedor.children).find((elemento) => elemento.classList.contains(pj));
+      imagenes.classList.add('ancho-img');
+      let salida = 1;
+      compuerta(imagenes, elemento1, salida);
+      salida = 0;
+    }
   }
+})
+function compuerta(imagenes, elemento1, salida) {
+  if (salida !== 0) {
+    contenedor.addEventListener("mouseout", () => {
+      imagenes.classList.remove('ancho-img');
+    })
   }
-});
-/* contenedor.addEventListener("mouseenter", () => {
-  const elemento1 = String(event.target);
-  console.log(elemento1)
-  for (const pj of personajes){
-    if (elemento1.indexOf(pj) > 0){
-    const imagenes = Array.from(contenedor.children).find((elemento) => elemento.classList.contains(pj));
-    console.log(imagenes)
-  }
-  }
-}); */
+}
+
