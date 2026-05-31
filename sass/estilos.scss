@@ -1,59 +1,74 @@
 header {
   display: flex;
   background: radial-gradient(circle, rgba(47, 0, 255, 0.796) 43%, #000000 100%);
-  font-weight:bolder;
+  font-weight: bolder;
   width: 100%;
   position: sticky;
   top: 0;
   left: 0;
   z-index: 1000;
-}
-header h2 {
-  font-family: "Fugaz One", sans-serif;
-  color: #e4a553;
-  text-decoration: none;
+
+  h2 {
+    font-family: "Fugaz One", sans-serif;
+    color: #e4a553;
+    text-decoration: none;
+  }
+
+  a {
+    font-family: "Fugaz One", sans-serif;
+    color: #d8d8d8;
+    text-decoration: none;
+  }
+
+  .texto-header {
+    font-family: "Space Mono", monospace;
+    color: #ffffff;
+    text-shadow: 4px 3px #000000;
+    font-size: 1.3em;
+  }
+
+  .titulo {
+    font-family: "Space Mono", monospace;
+    text-shadow: 5px 5px #590061;
+    font-size: 2.1rem;
+  }
+
 }
 
-header a {
-  font-family: "Fugaz One", sans-serif;
-  color: #d8d8d8;
-  text-decoration: none;
-}
-.texto-header {
-  font-family: "Space Mono", monospace;
-  color: #ffffff;
-  text-shadow: 4px 3px #000000;
-  font-size: 1.3em;
-}
-.titulo {
-  font-family: "Space Mono", monospace;
-  text-shadow: 5px 5px #590061;
-  font-size: 2.1rem;
-}
 footer {
   color: rgb(255, 255, 255);
+
+  p {
+    font-family: "Fugaz One", sans-serif;
+    color: large;
+    text-align: center;
+  }
 }
-footer p {
-  font-family: "Fugaz One", sans-serif;
-  color: large;
-  text-align: center;
+
+.container div {
+  transform: scale(0.82);
+  .imagen-libre-2 {
+    position: relative;
+    transform: translate(0, 25px);
+    /* Desplaza 50px a la derecha y 100px hacia abajo */
+  }
+
+  .imagen-libre-3 {
+    position: relative;
+    /* O absolute */
+    transform: translate(0, 70px);
+    /* Desplaza 50px a la derecha y 100px hacia abajo */
+  }
+
+  img {
+    &.ancho-img {
+      transform: scale(1.1);
+    }
+  }
 }
-.imagen-libre-1 {
-    position: relative; /* O absolute */
-    transform: translate(0px, 0px); /* Desplaza 50px a la derecha y 100px hacia abajo */
-}
-.imagen-libre-2 {
-    position: relative; /* O absolute */
-    transform: translate(125px, 45px); /* Desplaza 50px a la derecha y 100px hacia abajo */
-}
-.imagen-libre-3 {
-    position: relative; /* O absolute */
-    transform: translate(-60px, 70px); /* Desplaza 50px a la derecha y 100px hacia abajo */
-}
-/* .texto-centro{
-  margin-bottom: 15%;
-} */
-.bordes{
+
+
+.bordes {
   background-color: #ffffff;
   border: 5px white;
 }

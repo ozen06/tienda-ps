@@ -8,27 +8,23 @@ header {
   left: 0;
   z-index: 1000;
 }
-
 header h2 {
   font-family: "Fugaz One", sans-serif;
   color: #e4a553;
   text-decoration: none;
 }
-
 header a {
   font-family: "Fugaz One", sans-serif;
   color: #d8d8d8;
   text-decoration: none;
 }
-
-.texto-header {
+header .texto-header {
   font-family: "Space Mono", monospace;
   color: #ffffff;
   text-shadow: 4px 3px #000000;
   font-size: 1.3em;
 }
-
-.titulo {
+header .titulo {
   font-family: "Space Mono", monospace;
   text-shadow: 5px 5px #590061;
   font-size: 2.1rem;
@@ -37,9 +33,31 @@ header a {
 footer {
   color: rgb(255, 255, 255);
 }
-
 footer p {
   font-family: "Fugaz One", sans-serif;
   color: large;
   text-align: center;
-}/*# sourceMappingURL=estilos.css.map */
+}
+
+.container div {
+  transform: scale(0.82);
+}
+.container div .imagen-libre-2 {
+  position: relative;
+  transform: translate(0, 25px);
+  /* Desplaza 50px a la derecha y 100px hacia abajo */
+}
+.container div .imagen-libre-3 {
+  position: relative;
+  /* O absolute */
+  transform: translate(0, 70px);
+  /* Desplaza 50px a la derecha y 100px hacia abajo */
+}
+.container div img.ancho-img {
+  transform: scale(1.1);
+}
+
+.bordes {
+  background-color: #ffffff;
+  border: 5px white;
+}
