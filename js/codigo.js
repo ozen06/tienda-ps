@@ -40,3 +40,22 @@ function compuerta(imagenes, elemento1, salida) {
   }
 }
 
+/* function clock() {
+  var ctx = document.getElementById("canvas").getContext("2d");
+  ctx.save();
+  ctx.clearRect(0, 0, 150, 150);
+  ctx.translate(75, 75);
+  ctx.scale(0.4, 0.4);
+  ctx.strokeStyle = "black";
+  ctx.fillStyle = "white";
+  ctx.lineWidth = 8;
+  ctx.lineCap = "round";
+
+  
+
+  ctx.restore();
+
+  window.requestAnimationFrame(clock);
+}
+
+window.requestAnimationFrame(clock); */

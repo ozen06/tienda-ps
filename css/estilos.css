@@ -1,10 +1,21 @@
 /* Box sizing rules */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 /* Remove default margin */
-body, h1, h2, h3, h4, p, figure, blockquote, dl, dd {
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
   margin: 0;
 }
 
@@ -67,7 +78,8 @@ footer p {
   transform: scale(1.1);
 }
 
-.bordes {
-  background-color: #ffffff;
-  border: 5px white;
-}
+.blanco {
+  background-image: url("../img/index/blank.jpg");
+  background-image: gradient(0px);
+  background-size: 1px 1px;
+}/*# sourceMappingURL=estilos.css.map */

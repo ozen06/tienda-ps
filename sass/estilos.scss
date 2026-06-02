@@ -1,10 +1,21 @@
 /* Box sizing rules */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 /* Remove default margin */
-body, h1, h2, h3, h4, p, figure, blockquote, dl, dd {
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
   margin: 0;
 }
 
@@ -57,6 +68,7 @@ footer {
 
 .container div {
   transform: scale(0.82);
+
   .imagen-libre-2 {
     position: relative;
     transform: translate(0, 25px);
@@ -77,8 +89,8 @@ footer {
   }
 }
 
-
-.bordes {
-  background-color: #ffffff;
-  border: 5px white;
+.blanco {
+  background-image: url("../img/index/blank.jpg");
+  background-image: gradient(0px);
+  background-size: 1px 1px;
 }
