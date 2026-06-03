@@ -18,12 +18,13 @@
     <link rel="stylesheet" href="./css/estilos.css">
 </head>
 
-<body class="fondo-dinamico blanco">
+<body class="bg-black">
 
     <header
-        class="flex-header start-0 bottom-0 w-100 bg-black text-white justify-content-center py-0 align-items-center">
-        <nav class="fs-2 nav-bar justify-content-end">
-            <h1 class="text-center"><a href="./index.html">Cordoba.store</a></h1>
+        class="d-flex container-0 start-0 bottom-0 text-white py-0 position-static justify-content-center align-items-center">
+        <nav class="d-flex fs-3 nav-bar justify-content-center align-items-center overflow-hidden">
+            <h1 style="display: none;">Cordoba.Store</h1>
+           <a href="./index.html"><img src="./img/logo/logo pequeño.svg"></a>
             <ul class="list-unstyled d-flex m-1 gap-3">
                 <li class="div-header flex-header__delete"><a href="./index.html">Inicio</a></li>
                 <li class="div-header"><a href="./pages/tienda.html">Tienda</a></li>
@@ -33,21 +34,28 @@
     </header>
 
     <main class="container">
-        <div class="d-flex justify-content-center align-items-center row-1">
+        <div class="d-flex justify-content-center align-content-center align-items-center row-1">
             <img class="col-3 sackboy imagen-libre-2" src="./img/index/sackboy.png">
             <img class="col-3 ellie imagen-libre-1" src="./img/index/ellie.png">
-            <p class="col-4 text-white fs-2 texto-centro position-relative">No es solo una tienda, es una experiencia.
-            </p>
+            <div class="d-flex col-4 justify-content-center">
+                <p class="text-white fs-2 texto-centro position-static">No es solo una tienda, es una experiencia.</p>
+            </div>
             <img class="col-3 kratos imagen-libre-1" src="./img/index/kratos.png">
             <img class="col-3 crash imagen-libre-3" src="./img/index/crash.png">
         </div>
-        <div class="d-flex justify-content-center align-items-center row-2 ">
-            <p class="col-4 text-white fs-2 texto-centro position-relative square">No es solo una tienda, es una experiencia.</p>
+        <div class="d-flex justify-content-center align-content-center align-items-center row-1">
+            <img class="col-3 sackboy imagen-libre-2" src="./img/index/sackboy.png">
+            <img class="col-3 ellie imagen-libre-1" src="./img/index/ellie.png">
+            <div>
+                <p class="text-white fs-2 texto-centro">No es solo una tienda, es una experiencia.</p>
+            </div>
+            <img class="col-3 kratos imagen-libre-1" src="./img/index/kratos.png">
+            <img class="col-3 crash imagen-libre-3" src="./img/index/crash.png">
         </div>
     </main>
 
     <footer
-        class="d-flex position-absolute start-0 w-100 h-1 bg-black text-white py-2 border-0 justify-content-center align-items-end align-content-end">
+        class="d-flex position-absolute bottom--100 w-100 h-1 text-white py-2 border-0 justify-content-evenly align-items-stretch">
         <nav class="fs-4 list-unstyled align-items-center gap-3 m-0 p-0">
             <p>Creado por oZen</p>
         </nav>

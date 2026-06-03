@@ -21,13 +21,20 @@ dd {
 
 header {
   display: flex;
-  background: radial-gradient(circle, rgba(47, 0, 255, 0.796) 43%, #000000 100%);
-  font-weight: bolder;
+  background: #ffffff;
   width: 100%;
   position: sticky;
   top: 0;
   left: 0;
-  z-index: 1000;
+  z-index: 1;
+  border-bottom: 2px solid;
+  border-color: rgb(109, 109, 109);
+}
+header.container-0 {
+  height: 50px;
+}
+header.container-0 img {
+  transform: scale(0.2);
 }
 header h2 {
   font-family: "Fugaz One", sans-serif;
@@ -36,7 +43,7 @@ header h2 {
 }
 header a {
   font-family: "Fugaz One", sans-serif;
-  color: #d8d8d8;
+  color: #000000;
   text-decoration: none;
 }
 header .texto-header {
@@ -61,25 +68,24 @@ footer p {
 }
 
 .container div {
-  transform: scale(0.82);
+  transform: scale(0.85);
+  border-style: solid;
+  border-color: red;
+  position: relative;
 }
 .container div .imagen-libre-2 {
   position: relative;
-  transform: translate(0, 25px);
   /* Desplaza 50px a la derecha y 100px hacia abajo */
 }
 .container div .imagen-libre-3 {
   position: relative;
   /* O absolute */
-  transform: translate(0, 70px);
   /* Desplaza 50px a la derecha y 100px hacia abajo */
+}
+.container div img {
+  border-style: solid;
+  border-color: red;
 }
 .container div img.ancho-img {
   transform: scale(1.1);
-}
-
-.blanco {
-  background-image: url("../img/index/blank.jpg");
-  background-image: gradient(0px);
-  background-size: 1px 1px;
 }/*# sourceMappingURL=estilos.css.map */
