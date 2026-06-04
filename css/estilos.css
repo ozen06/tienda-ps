@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* Box sizing rules */
 *,
 *::before,
@@ -88,4 +89,8 @@ footer p {
 }
 .container div img.ancho-img {
   transform: scale(1.1);
-}/*# sourceMappingURL=estilos.css.map */
+}
+
+.tienda-tamaño {
+  width: 15%;
+}
