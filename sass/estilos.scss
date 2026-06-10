@@ -1,0 +1,101 @@
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+header {
+  display: flex;
+  background: #ffffff;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  border-bottom: 2px solid;
+  border-color: rgb(109, 109, 109);
+
+  &.container-0 {
+    height: 50px;
+
+    img {
+      transform: scale(0.2);
+    }
+  }
+
+  h2 {
+    font-family: "Fugaz One", sans-serif;
+    color: #e4a553;
+    text-decoration: none;
+  }
+
+  a {
+    font-family: "Fugaz One", sans-serif;
+    color: #000000;
+    text-decoration: none;
+  }
+
+  .texto-header {
+    font-family: "Space Mono", monospace;
+    color: #ffffff;
+    text-shadow: 4px 3px #000000;
+    font-size: 1.3em;
+  }
+
+  .titulo {
+    font-family: "Space Mono", monospace;
+    text-shadow: 5px 5px #590061;
+    font-size: 2.1rem;
+  }
+
+}
+
+footer {
+  color: rgb(255, 255, 255);
+
+  p {
+    font-family: "Fugaz One", sans-serif;
+    color: large;
+    text-align: center;
+  }
+}
+
+.container div {
+  img {
+    transform: scale(0.85);
+
+    &.ancho-img {
+      transform: scale(1.1);
+    }
+  }
+}
+
+.bordes {
+  border-style: solid;
+  border-color: red;
+}
+
+.tienda-tamaño {
+  width: 15%;
+}
+
+.cards {
+  background: #003a5f;
+  margin: 1%;
+  border-radius: 5em 0em;
+}
