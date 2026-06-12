@@ -1,64 +1,201 @@
-//base de datos
+/* ==========================================================================
+   1. VARIABLES GLOBAL / ESTADO DE LA APLICACIÓN
+   ========================================================================== */
+// Datos estáticos o configuraciones
 const products = [
   // --- STEAM ---
-  { Nombre: "GTA 5", Precio: 5, Categoria: "Accion", Plataforma: "Steam" },
-  { Nombre: "Cyberpunk 2077", Precio: 30, Categoria: "RPG / Accion", Plataforma: "Steam" },
+  { Nombre: "GTA 5", Precio: 5, Genero: "Accion", Plataforma: "Steam" },
+  { Nombre: "Cyberpunk 2077", Precio: 30, Genero: "RPG / Accion", Plataforma: "Steam" },
 
   // --- PSN ---
-  { Nombre: "The Last of Us Part I", Precio: 70, Categoria: "Aventura", Plataforma: "PSN" },
-  { Nombre: "God of War Ragnarok", Precio: 60, Categoria: "Accion", Plataforma: "PSN" },
+  { Nombre: "The Last of Us Part I", Precio: 70, Genero: "Aventura", Plataforma: "PSN" },
+  { Nombre: "God of War Ragnarok", Precio: 60, Genero: "Accion", Plataforma: "PSN" },
 
   // --- EPIC GAMES ---
-  { Nombre: "Alan Wake 2", Precio: 50, Categoria: "Terror", Plataforma: "Epic" },
-  { Nombre: "Red Dead Redemption 2", Precio: 40, Categoria: "Accion / Aventura", Plataforma: "Epic" },
+  { Nombre: "Alan Wake 2", Precio: 50, Genero: "Terror", Plataforma: "Epic" },
+  { Nombre: "Red Dead Redemption 2", Precio: 40, Genero: "Accion / Aventura", Plataforma: "Epic" },
 
   // --- XBOX ---
-  { Nombre: "Halo Infinite", Precio: 40, Categoria: "Shooter", Plataforma: "Xbox" },
-  { Nombre: "Forza Horizon 5", Precio: 45, Categoria: "Carreras", Plataforma: "Xbox" }
+  { Nombre: "Halo Infinite", Precio: 40, Genero: "Shooter", Plataforma: "Xbox" },
+  { Nombre: "Forza Horizon 5", Precio: 45, Genero: "Carreras", Plataforma: "Xbox" }
 ];
 
-//Cambio de texto central cada 5s. 
-let texto = document.getElementsByClassName("texto-centro")
-let textoNuevo = ["Hola", "Q onda"];
-setInterval(() => {
-  let posicion = 0;
-  if (texto[0]) {
-    if (texto[0].innerText === textoNuevo[posicion]) {
-      texto[0].innerText = textoNuevo[posicion + 1];
-    } else if (texto[0].innerText === textoNuevo[posicion + 1]) {
-      texto[0].innerText = "No es una simple tienda, es una experiencia.";
-    } else {
-      texto[0].innerText = textoNuevo[posicion];
-    }
-  }
-}, 2000);
+// Estado dinámico de la app (variables que cambian con la interacción del usuario)
+const datos = [[], [], [], []];
+let contadorCarrito = 0;
 
-//Agrandar imagenes index dinamicamente.
-const contenedor = document.querySelectorAll("div");
-const imagenes = contenedor[0];
-const personajes = ["ellie", "kratos", "crash", "sackboy"];
-imagenes.addEventListener("mouseover", () => {
-  const elemento = String(event.target.className);
-  for (const pj of personajes) {
-    if (elemento.indexOf(pj) > 0) {
-      const imagen = Array.from(imagenes.children).find((elemento) => elemento.classList.contains(pj));
-      imagen.classList.add('ancho-img');
-      compuerta(imagenes, imagen, 'ancho-img');
-    }
-  }
-})
-const tienda = contenedor[2];
-tienda.addEventListener("mouseover", () => {
-  const elemento = String(event.target.className);
-  if (elemento !== null) {
-    const fondo = Array.from(tienda.children).find((elemento) => elemento.classList.contains("tienda"));
-    console.log(fondo)
-    fondo.classList.add('tienda-tamaño');
-    compuerta(tienda, fondo, 'tienda-tamaño');
-  }
-})
-function compuerta(evento, contenedor, clase) {
-  evento.addEventListener("mouseout", () => {
-    contenedor.classList.remove(clase);
+/* ==========================================================================
+   2. SELECCIÓN DE ELEMENTOS DEL DOM (Nodos HTML)
+   ========================================================================== */
+// Agrupá todos los document.getElementById o querySelector acá arriba
+const inventario = document.getElementById('EymrNHzbVl')
+const listaGeneros = document.getElementById('f-generos');
+const listaPrecio = document.getElementById('f-precio');
+const listaPlataforma = document.getElementById('f-plataforma');
+const carrito = document.getElementById('Carrito');
+
+/* ==========================================================================
+   3. LOGICA PRINCIPAL / RENDERIZADO (Funciones que dibujan en pantalla)
+   ========================================================================== */
+// Función encargada exclusivamente de pintar las tarjetas en el HTML
+function tarjetas(datos) {
+  products.forEach((elemento, indice) => {
+    const nombre = elemento.Nombre;
+    const precio = elemento.Precio;
+    const genero = elemento.Genero;
+    const plataforma = elemento.Plataforma;
+    impresion(nombre, precio, plataforma, indice);
   })
 }
+
+function impresion(nombre, precio, plataforma, row) {
+if (plataforma === 'Steam') {
+    inventario.innerHTML += `
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
+                <div class="cards-${plataforma.toLowerCase()} overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <img class="w-50 img-fluid" src="../img/plataformas/steam-1.svg" alt="${plataforma}">
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center my-2">
+                        <img class="rounded-2 w-100 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
+                    </div>
+                    <p class="fs-5 text-white fw-bold m-0 text-start">${nombre}</p>
+                    <button class="rounded btn btn-outline-secondary text-decoration-none" color>
+                        <p class="fs-4 text-info fw-semibold m-0 text-center btn-compra">${'$' + precio}</p>
+                    </button>
+                </div>
+            </div>
+    `;
+  } else if (plataforma === 'Epic') {
+    inventario.innerHTML += `
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
+                <div class="cards-${plataforma.toLowerCase()} overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <img class="w-50 img-fluid" src="https://static.cdnlogo.com/logos/e/88/epic-games.svg" alt="${plataforma}">
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center my-2">
+                        <img class="rounded-2 w-100 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
+                    </div>
+                    <p class="fs-5 text-white fw-bold m-0 text-start">${nombre}</p>
+                    <button class="rounded btn btn-outline-secondary text-decoration-none" color>
+                        <p class="fs-4 text-info fw-semibold m-0 text-center btn-compra">${'$' + precio}</p>
+                    </button>
+                </div>
+            </div>
+    `;
+  } else if (plataforma === 'PSN') {
+    inventario.innerHTML += `
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
+                <div class="cards-${plataforma.toLowerCase()} overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <img class="w-50 img-fluid" src="https://static.cdnlogo.com/logos/p/56/playstation-and-wordmark.svg" alt="${plataforma}">
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center my-2">
+                        <img class="rounded-2 w-100 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
+                    </div>
+                    <p class="fs-5 text-white fw-bold m-0 text-start">${nombre}</p>
+                    <button class="rounded btn btn-outline-secondary text-decoration-none" color>
+                        <p class="fs-4 text-info fw-semibold m-0 text-center btn-compra">${'$' + precio}</p>
+                    </button>
+                </div>
+            </div>
+    `;
+  } else if (plataforma === "Xbox") {
+    inventario.innerHTML += `
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
+                <div class="cards-${plataforma.toLowerCase()} overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <img class="w-50 img-fluid" src="https://static.cdnlogo.com/logos/x/1/xbox.svg" alt="${plataforma}">
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center my-2">
+                        <img class="rounded-2 w-100 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
+                    </div>
+                    <p class="fs-5 text-white fw-bold m-0 text-start">${nombre}</p>
+                    <button class="rounded btn btn-outline-secondary text-decoration-none" color>
+                        <p class="fs-4 text-info fw-semibold m-0 text-center btn-compra">${'$' + precio}</p>
+                    </button>
+                </div>
+            </div>
+    `;
+  }
+}
+
+function filtros(datos) {
+  datos[1].forEach((elemento) => {
+    listaGeneros.innerHTML += `
+        <li><label class="dropdown-item"><input type="checkbox" value="${elemento}"> ${elemento}</label></li>
+    `;
+  })
+  datos[2].forEach((elemento) => {
+    listaPrecio.innerHTML += `
+        <li><label class="dropdown-item"><input type="checkbox" value="${elemento}"> ${elemento}</label></li>
+    `;
+  })
+  datos[3].forEach((elemento) => {
+    listaPlataforma.innerHTML += `
+        <li><label class="dropdown-item"><input type="checkbox" value="${elemento}"> ${elemento}</label></li>
+    `;
+  })
+}
+
+/* ==========================================================================
+   4. FUNCIONES AUXILIARES / FILTRADO / MANEJO DE ESTADO
+   ========================================================================== */
+// Lógica pura de negocios (filtrar datos, cálculos matemáticos, etc.)
+
+ordenamiento(datos[0], "Nombre");
+ordenamiento(datos[1], "Genero");
+ordenamiento(datos[2], "Precio");
+ordenamiento(datos[3], "Plataforma");
+
+function ordenamiento(arreglo, propiedad) {
+  products.map((elemento) => {
+    const actual = elemento[propiedad];
+    const borrar = arreglo.findIndex((elemento) => elemento == actual);
+    if (borrar === -1) {
+      if (typeof actual == "string") {
+        arreglo.push(actual);
+      } else if (typeof actual == "number") {
+        arreglo.push(actual);
+        arreglo.sort(function (a, b) {
+          return a - b;
+        });
+      }
+    }
+  });
+}
+
+/* fetch('https://www.steamgriddb.com/api/v2')
+  .then(response => response.json())
+  .then(data => console.log(data)); */
+
+/* ==========================================================================
+   5. ESCUCHADORES DE EVENTOS (Event Listeners)
+   ========================================================================== */
+// Captura de clics, inputs, envíos de formularios. Van al final porque llaman a las funciones de arriba.
+
+
+inventario.addEventListener('click', (event) => {
+  if (event.target.closest('.btn-compra')) {
+    contadorCarrito += 1;
+    carrito.innerText = contadorCarrito;
+  }
+});
+
+/* botonCarrito.addEventListener('click', () => {
+    console.log("Abriendo carrito...");
+});
+// Ejemplo para capturar los filtros (usando delegación de eventos o listeners individuales)
+dropdownGeneros.addEventListener('change', (e) => {
+    const generoSeleccionado = e.target.value;
+    // Ejecuta lógica de filtrado y vuelve a renderizar
+}); */
+
+/* ==========================================================================
+   6. INICIALIZACIÓN DE LA APLICACIÓN (Punto de arranque)
+   ========================================================================== */
+// Código que se ejecuta apenas se termina de cargar la página para que la tienda no empiece vacía
+document.addEventListener('DOMContentLoaded', () => {
+  tarjetas(datos);
+  filtros(datos);
+});

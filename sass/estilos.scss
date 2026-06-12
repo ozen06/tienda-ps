@@ -76,27 +76,8 @@ footer {
 }
 
 .container div {
-  transform: scale(0.85);
-  border-style: solid;
-  border-color: red;
-  position: relative;
-
-  .imagen-libre-2 {
-    position: relative;
-
-    /* Desplaza 50px a la derecha y 100px hacia abajo */
-  }
-
-  .imagen-libre-3 {
-    position: relative;
-    /* O absolute */
-
-    /* Desplaza 50px a la derecha y 100px hacia abajo */
-  }
-
   img {
-    border-style: solid;
-    border-color: red;
+    transform: scale(0.85);
 
     &.ancho-img {
       transform: scale(1.1);
@@ -104,6 +85,59 @@ footer {
   }
 }
 
-.tienda-tamaño{
+.bordes {
+  border-style: solid;
+  border-color: red;
+}
+
+.tienda-tamaño {
   width: 15%;
+}
+
+.cards-steam {
+  background:
+    radial-gradient(circle at top right, rgba(102, 192, 244, .15), transparent 35%),
+    linear-gradient(135deg, #171a21 0%, #091a46 50%, #003a5f 100%);
+  border-radius: 5em 0em;
+  margin: 1%;
+
+  img {
+    padding: -5%;
+  }
+}
+
+.cards-psn {
+  background:
+    radial-gradient(circle at top right, rgba(102, 192, 244, .15), transparent 35%),
+    linear-gradient(135deg, #171a21 0%, #091a46 50%, #003a5f 100%);
+  border-radius: 5em 0em;
+  margin: 1%;
+
+  img {
+    padding: -5%;
+  }
+}
+
+.cards-epic {
+  background:
+    radial-gradient(circle at top right, rgba(102, 192, 244, .15), transparent 35%),
+    linear-gradient(135deg, #171a21 0%, #091a46 50%, #003a5f 100%);
+  border-radius: 5em 0em;
+  margin: 1%;
+
+  img {
+    padding: -5%;
+  }
+}
+
+.cards-xbox {
+  background:
+    radial-gradient(circle at top right, rgba(102, 192, 244, .15), transparent 35%),
+    linear-gradient(135deg, #171a21 0%, #091a46 50%, #003a5f 100%);
+  border-radius: 5em 0em;
+  margin: 1%;
+
+  img {
+    padding: -5%;
+  }
 }
