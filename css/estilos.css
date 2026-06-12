@@ -84,8 +84,38 @@ footer p {
   width: 15%;
 }
 
-.cards {
-  background: #003a5f;
-  margin: 1%;
+.cards-steam {
+  background: radial-gradient(circle at top right, rgba(102, 192, 244, 0.15), transparent 35%), linear-gradient(135deg, #171a21 0%, #091a46 50%, #003a5f 100%);
   border-radius: 5em 0em;
+  margin: 1%;
+}
+.cards-steam img {
+  padding: -5%;
+}
+
+.cards-psn {
+  background: radial-gradient(circle at top right, rgba(102, 192, 244, 0.15), transparent 35%), linear-gradient(135deg, #171a21 0%, #091a46 50%, #003a5f 100%);
+  border-radius: 5em 0em;
+  margin: 1%;
+}
+.cards-psn img {
+  padding: -5%;
+}
+
+.cards-epic {
+  background: radial-gradient(circle at top right, rgba(102, 192, 244, 0.15), transparent 35%), linear-gradient(135deg, #171a21 0%, #091a46 50%, #003a5f 100%);
+  border-radius: 5em 0em;
+  margin: 1%;
+}
+.cards-epic img {
+  padding: -5%;
+}
+
+.cards-xbox {
+  background: radial-gradient(circle at top right, rgba(102, 192, 244, 0.15), transparent 35%), linear-gradient(135deg, #171a21 0%, #091a46 50%, #003a5f 100%);
+  border-radius: 5em 0em;
+  margin: 1%;
+}
+.cards-xbox img {
+  padding: -5%;
 }/*# sourceMappingURL=estilos.css.map */
