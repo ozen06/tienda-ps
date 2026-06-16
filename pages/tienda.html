@@ -17,19 +17,8 @@
     <link rel="stylesheet" href="../css/estilos.css">
 </head>
 
-<body class="bg-black">
+<body class="bg-black z-n1">
 
-    <!-- <header
-        class="d-flex container-0 start-0 bottom-0 text-white py-0 position-static justify-content-center align-items-center">
-        <nav class="d-flex fs-3 nav-bar justify-content-center align-items-center overflow-hidden">
-            <h1 style="display: none;">Cordoba.Store</h1>
-            <a href="../index.html"><img src="../img/logo/logo-pequeño.svg"></a>
-            <ul class="list-unstyled d-flex m-1 gap-3">
-                <li class="div-header flex-header__delete"><a href="../index.html">Inicio</a></li>
-                <li class="div-header"><a href="#descuentos">Descuentos</a></li>
-            </ul>
-        </nav>
-    </header> -->
     <header class="w-100 bg-black border-bottom-steam sticky-top py-2 px-3">
         <div class="container-fluid d-flex justify-content-between align-items-center">
 
@@ -57,27 +46,72 @@
             </nav>
 
             <div class="d-flex align-items-center">
-                <button
-                    class="btn btn-outline-info d-flex align-items-center gap-2 px-3 py-1.5 position-relative fw-semibold">
+                <button class="btn btn-outline-info position-relative d-flex align-items-center gap-2" type="button"
+                    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
                         class="bi bi-cart3" viewBox="0 0 16 16">
                         <path
                             d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
                     </svg>
                     <span>Carrito</span>
-                    <span id="Carrito" class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle p-1 px-2 fs-6"></span>
+                    <span id="Carrito"
+                        class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle p-1 px-2 fs-6"></span>
                 </button>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark p-3 mb-5" id="lista-carrito-dropdown"
+                    style="min-width: 320px;">
+                    <span class="fs-5 text-white fw-semibold">Carro</span>
+                    <div id="items-carrito" class="carrito-scroll">
+                        <li class="px-2 py-2 mb-2 border-bottom border-secondary border-opacity-25"
+                            style="list-style: none;">
+                            <div
+                                class="cards-steam overflow-hidden rounded-3 p-2 d-flex align-items-center justify-content-between gap-3 h-100 shadow-sm">
+
+                                <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+                                    style="width: 75px; height: 75px;">
+                                    <img class="img-fluid" src="../img/plataformas/steam-1.svg" alt="Steam">
+                                </div>
+
+                                <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+                                    style="width: 50px; height: 40px;">
+                                    <img class="rounded-1 img-fluid" src="../img/juegos/GTA 5.svg" alt="GTA 5">
+                                </div>
+
+                                <div class="flex-grow-1 text-start">
+                                    <p class="fs-6 text-white fw-bold m-0 text-truncate"
+                                        style="max-width: 120px; line-height: 1.2;">GTA 5</p>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                    <span class="fs-5 text-info fw-semibold">$5</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 flex-shrink-0 btn btn-outline-danger">
+                                    <img src="https://images.icon-icons.com/2249/PNG/512/delete_forever_outline_icon_139694.png"
+                                        width="22px" height="22px" alt="">
+                                </div>
+                            </div>
+                        </li>
+                    </div>
+
+                    <div id="footer-carrito" class="">
+                        <li class="d-flex justify-content-between align-items-center mb-3 row">
+                            <span class="fw-bold text-white">Total:</span>
+                            <span class="text-info fw-bold fs-5" id="total-carrito">$0</span>
+                        </li>
+                        <li>
+                            <button class="btn btn-info w-100 fw-bold text-dark rounded">Proceder al Pago</button>
+                        </li>
+                    </div>
+                </ul>
             </div>
 
         </div>
     </header>
 
-    <main class="container-1 overflow-hidden">
-        <div class="d-sm-flex justify-content-center border p-5">
+    <main class="container-1 overflow-hidden z-3">
+        <div id="filtros" class="d-sm-flex justify-content-center border p-5">
             <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary dropdown-toggle btn-lg" data-bs-toggle="dropdown"
                     aria-expanded="false">
-                    Genero
+                    Categorias
                 </button>
                 <ul id="f-generos" class="dropdown-menu">
                 </ul>
