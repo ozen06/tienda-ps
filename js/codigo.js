@@ -5,7 +5,7 @@
 const products = [
   // --- STEAM ---
   { Nombre: "GTA 5", Precio: 5, Genero: "Accion", Plataforma: "Steam" },
-  { Nombre: "Cyberpunk 2077", Precio: 30, Genero: "RPG / Accion", Plataforma: "Steam" },
+  { Nombre: "Cyberpunk 2077", Precio: 30, Genero: ["RPG", "Accion"], Plataforma: "Steam" },
 
   // --- PSN ---
   { Nombre: "The Last of Us Part I", Precio: 70, Genero: "Aventura", Plataforma: "PSN" },
@@ -13,7 +13,7 @@ const products = [
 
   // --- EPIC GAMES ---
   { Nombre: "Alan Wake 2", Precio: 50, Genero: "Terror", Plataforma: "Epic" },
-  { Nombre: "Red Dead Redemption 2", Precio: 40, Genero: "Accion / Aventura", Plataforma: "Epic" },
+  { Nombre: "Red Dead Redemption 2", Precio: 40, Genero: ["Accion", "Aventura"], Plataforma: "Epic" },
 
   // --- XBOX ---
   { Nombre: "Halo Infinite", Precio: 40, Genero: "Shooter", Plataforma: "Xbox" },
@@ -22,47 +22,112 @@ const products = [
 
 // Estado dinámico de la app (variables que cambian con la interacción del usuario)
 const datos = [[], [], [], []];
+const filtrosActivos = [];
+let itemFiltrados = [];
+let itemSeleccionados = []; //apartir de button da con el nombre del juego ahi accedo propiedades
 let contadorCarrito = 0;
+let totalCarrito = 0;
 
 /* ==========================================================================
    2. SELECCIÓN DE ELEMENTOS DEL DOM (Nodos HTML)
    ========================================================================== */
 // Agrupá todos los document.getElementById o querySelector acá arriba
 const inventario = document.getElementById('EymrNHzbVl')
+const filtros = document.getElementById('filtros');
 const listaGeneros = document.getElementById('f-generos');
 const listaPrecio = document.getElementById('f-precio');
 const listaPlataforma = document.getElementById('f-plataforma');
-const carrito = document.getElementById('Carrito');
+const carritoCompleto = document.getElementById('Carrito');
+const CantidadCarrito = document.getElementById('cantidad-items-carrito');
+const itemsCarrito = document.getElementById('items-carrito');
+const carritoTotal = document.getElementById('total-carrito');
 
 /* ==========================================================================
    3. LOGICA PRINCIPAL / RENDERIZADO (Funciones que dibujan en pantalla)
    ========================================================================== */
 // Función encargada exclusivamente de pintar las tarjetas en el HTML
-function tarjetas(datos) {
-  for (let i = 0; i < 2; i++) {
-    const nombre = datos[0][i];
-    const precio = datos[2][i];
-    const plataforma = datos[3][i];
-    inventario.innerHTML += `
-        <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
-                <div class="cards-steam overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow">
-                    <div class="d-flex justify-content-center align-items-center">
-                        <img class="w-50 img-fluid" src="../img/plataformas/steam-1.svg" alt="Steam">
-                    </div>
-                    <div class="d-flex justify-content-center align-items-center my-2">
-                        <img class="rounded-2 w-100 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
-                    </div>
-                    <p class="fs-5 text-white fw-bold m-0 text-start">${nombre}</p>
-                    <button class="rounded btn btn-outline-secondary text-decoration-none" color>
-                        <p class="fs-4 text-info fw-semibold m-0 text-center btn-compra">${'$' + precio}</p>
-                    </button>
-                </div>
-            </div>
-    `;
+function tarjetas(arreglo) {
+  if (arreglo !== itemSeleccionados) {
+    inventario.innerHTML = "";
+    for (const elemento of arreglo) {
+      impresion(elemento, "inventario")
+    }
+  } else if (arreglo === itemSeleccionados) {
+    itemsCarrito.innerHTML = "";
+    for (const item of arreglo) {
+      products.forEach(producto => {
+        if (producto.Nombre == item) {
+          totalCarrito += producto.Precio;
+          impresion(producto);
+        }
+      });
+    }
   }
 }
 
-function filtros(datos) {
+function impresion(elemento, regla) {
+  const url = {
+    Steam: "../img/plataformas/steam-1.svg", Epic: "https://static.cdnlogo.com/logos/e/88/epic-games.svg",
+    PSN: "https://static.cdnlogo.com/logos/p/56/playstation-and-wordmark.svg", Xbox: "https://static.cdnlogo.com/logos/x/1/xbox.svg"
+  }
+  const nombre = elemento.Nombre;
+  const plataforma = elemento.Plataforma;
+  const precio = elemento.Precio;
+
+  if (regla == "inventario") {
+    inventario.innerHTML += `
+    <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
+        <div class="cards-${plataforma.toLowerCase()} overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow">
+            <div class="d-flex justify-content-center align-items-center">
+                <img class="w-50 img-fluid" src="${url[plataforma]}" alt="${plataforma}">
+            </div>
+            <div class="d-flex justify-content-center align-items-center my-2">
+                <img class="rounded-2 w-100 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
+            </div>
+            <p class="fs-5 text-white fw-bold m-0 text-start">${nombre}</p>
+            <button class="rounded btn btn-outline-info text-decoration-none mt-auto btn-compra" 
+                    data-nombre="${nombre}" 
+                    data-precio="${precio}"> 
+                <span class="fs-5 fw-semibold m-0 text-center">$${precio}</span>
+            </button>
+        </div>
+    </div>
+  `;
+  } else {
+    itemsCarrito.innerHTML += `
+      <li class="px-2 py-2 mb-2 border-bottom border-secondary border-opacity-25"
+        style="list-style: none;">
+        <div
+          class="cards-steam overflow-hidden rounded-3 p-2 d-flex align-items-center justify-content-between gap-3 h-100 shadow-sm">
+          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+            style="width: 75px; height: 75px;">
+            <img class="img-fluid" src="${url[plataforma]}" alt="${plataforma}">
+          </div>
+          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+            style="width: 50px; height: 40px;">
+            <img class="rounded-1 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
+          </div>
+          <div class="flex-grow-1 text-start">
+            <p class="fs-6 text-white fw-bold m-0 text-truncate"
+              style="max-width: 120px; line-height: 1.2;">${nombre}</p>
+          </div>
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <span class="fs-5 text-info fw-semibold precio-item"
+            data-precio="${precio}"> 
+            $${precio}</span>
+          </div>
+          <button class="d-flex align-items-center gap-2 flex-shrink-0 btn btn-outline-danger btn-eliminar"
+          data-nombre="${nombre}">
+            <img src="https://images.icon-icons.com/2249/PNG/512/delete_forever_outline_icon_139694.png"
+              width="22px" height="22px" alt="">
+          </button>
+        </div>
+      </li>
+  `;
+  }
+}
+
+function filtrado(datos) {
   datos[1].forEach((elemento) => {
     listaGeneros.innerHTML += `
         <li><label class="dropdown-item"><input type="checkbox" value="${elemento}"> ${elemento}</label></li>
@@ -70,12 +135,12 @@ function filtros(datos) {
   })
   datos[2].forEach((elemento) => {
     listaPrecio.innerHTML += `
-        <li><label class="dropdown-item"><input type="checkbox" value="${elemento}"> ${elemento}</label></li>
+        <li><label class="dropdown-item"><input type="radio" name="precio-unico" value="${elemento}"> ${elemento}</label></li>
     `;
   })
   datos[3].forEach((elemento) => {
     listaPlataforma.innerHTML += `
-        <li><label class="dropdown-item"><input type="checkbox" value="${elemento}"> ${elemento}</label></li>
+        <li><label class="dropdown-item"><input type="radio" name="plataforma-unica" value="${elemento}"> ${elemento}</label></li>
     `;
   })
 }
@@ -93,7 +158,17 @@ ordenamiento(datos[3], "Plataforma");
 function ordenamiento(arreglo, propiedad) {
   products.map((elemento) => {
     const actual = elemento[propiedad];
+    if (Array.isArray(elemento[propiedad])) {
+      actual.forEach(genero => {
+        const borrar = arreglo.findIndex((elemento) => elemento == genero);
+        if (borrar === -1) {
+          arreglo.push(genero);
+        }
+      })
+    }
     const borrar = arreglo.findIndex((elemento) => elemento == actual);
+
+    // accion
     if (borrar === -1) {
       if (typeof actual == "string") {
         arreglo.push(actual);
@@ -107,33 +182,124 @@ function ordenamiento(arreglo, propiedad) {
   });
 }
 
+function comprobacion(propiedad) {
+  let tipoPropiedad = "";
+  datos[0].forEach(elemento => {
+    if (elemento === propiedad) {
+      tipoPropiedad = "Nombre"
+    }
+  })
+  datos[1].forEach(elemento => {
+    if (elemento === propiedad) {
+      tipoPropiedad = "Genero"
+    }
+  })
+  datos[2].forEach(elemento => {
+    if (elemento === Number(propiedad)) {
+      tipoPropiedad = "Precio"
+    }
+  })
+  datos[3].forEach(elemento => {
+    if (elemento === propiedad) {
+      tipoPropiedad = "Plataforma"
+    }
+  })
+  return tipoPropiedad
+}
+
+/* fetch('https://www.steamgriddb.com/api/v2')
+  .then(response => response.json())
+  .then(data => console.log(data)); */
+
 /* ==========================================================================
    5. ESCUCHADORES DE EVENTOS (Event Listeners)
    ========================================================================== */
 // Captura de clics, inputs, envíos de formularios. Van al final porque llaman a las funciones de arriba.
 
-
 inventario.addEventListener('click', (event) => {
-  if (event.target.closest('.btn-compra')) {
+  const boton = event.target.closest('.btn-compra');
+  if (boton) {
     contadorCarrito += 1;
-    carrito.innerText = contadorCarrito;
+    CantidadCarrito.innerText = contadorCarrito;
+    const juego = boton.dataset.nombre;
+    itemSeleccionados.push(juego);
+    tarjetas(itemSeleccionados);
+    carritoTotal.innerText = `$${totalCarrito}`;
   }
 });
+filtros.addEventListener('click', (event) => {
+  const elemento = event.target;
+  if (elemento.tagName == "INPUT") {
+    const actual = elemento.value;
+    dato = comprobacion(actual);
 
-/* botonCarrito.addEventListener('click', () => {
-    console.log("Abriendo carrito...");
+    if (dato === "Plataforma") {
+      filtrosActivos.forEach((elemento, indice) => {
+        if (comprobacion(elemento) === "Plataforma") {
+          filtrosActivos.splice(indice, 1)
+        }
+      })
+    } else if (dato === "Precio") {
+      filtrosActivos.forEach((elemento, indice) => {
+        if (comprobacion(elemento) === "Precio") {
+          filtrosActivos.splice(indice, 1)
+        }
+      })
+    }
+
+    const borrar = filtrosActivos.findIndex((elemento) => elemento == actual);
+    if (borrar == -1) {
+      filtrosActivos.push(actual);
+    } else {
+      filtrosActivos.splice(borrar, 1);
+    }
+
+    if (filtrosActivos.length === 0) {
+      tarjetas(products);
+      return;
+    }
+
+    itemFiltrados = products.filter(juego => {
+      return filtrosActivos.every((filtro) => {
+        dato = comprobacion(filtro)
+        if (dato == "Genero") {
+          return juego.Genero.includes(filtro)
+        } else if (dato == "Precio") {
+          return juego.Precio == Number(filtro)
+        } else if (dato == "Plataforma") {
+          return juego[dato] === filtro
+        }
+        return juego[dato] === filtro
+      })
+    });
+
+    tarjetas(itemFiltrados)
+  }
 });
-// Ejemplo para capturar los filtros (usando delegación de eventos o listeners individuales)
-dropdownGeneros.addEventListener('change', (e) => {
-    const generoSeleccionado = e.target.value;
-    // Ejecuta lógica de filtrado y vuelve a renderizar
-}); */
-
+carritoCompleto.addEventListener('click', (event) => {
+  const boton = event.target.closest('.btn-eliminar');
+  const precioItems = event.target.closest('.precio-item')
+  if (boton) {
+    console.log(precioItems)
+    const juego = boton.dataset.nombre;
+    const borrar = itemSeleccionados.findIndex((elemento) => elemento == juego)
+    if (contadorCarrito > 0) {
+      contadorCarrito -= 1;
+      CantidadCarrito.innerText = contadorCarrito;
+    } else if (contadorCarrito = 0) {
+      CantidadCarrito.innerText = ""
+    }
+    if (borrar !== -1) {
+      itemSeleccionados.splice(borrar, 1)
+    }
+    tarjetas(itemSeleccionados);
+  }
+});
 /* ==========================================================================
    6. INICIALIZACIÓN DE LA APLICACIÓN (Punto de arranque)
    ========================================================================== */
 // Código que se ejecuta apenas se termina de cargar la página para que la tienda no empiece vacía
 document.addEventListener('DOMContentLoaded', () => {
-  tarjetas(datos);
-  filtros(datos);
+  tarjetas(products);
+  filtrado(datos);
 });
