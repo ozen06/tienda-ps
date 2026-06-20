@@ -38,6 +38,7 @@ const listaGeneros = document.getElementById('f-generos');
 const listaPrecio = document.getElementById('f-precio');
 const listaPlataforma = document.getElementById('f-plataforma');
 const carritoCompleto = document.getElementById('Carrito');
+const carritoVacio = document.getElementById('lista-carrito-dropdown');
 const CantidadCarrito = document.getElementById('cantidad-items-carrito');
 const itemsCarrito = document.getElementById('items-carrito');
 const carritoTotal = document.getElementById('total-carrito');
@@ -47,7 +48,7 @@ const carritoTotal = document.getElementById('total-carrito');
    ========================================================================== */
 // Función encargada exclusivamente de pintar las tarjetas en el HTML
 function tarjetas(arreglo) {
-  if (arreglo !== itemSeleccionados) {
+  if (arreglo !== itemSeleccionados && arreglo[1] !== "borrar-carrito") {
     inventario.innerHTML = "";
     for (const elemento of arreglo) {
       impresion(elemento, "inventario")
@@ -57,7 +58,6 @@ function tarjetas(arreglo) {
     for (const item of arreglo) {
       products.forEach(producto => {
         if (producto.Nombre == item) {
-          totalCarrito += producto.Precio;
           impresion(producto);
         }
       });
@@ -112,12 +112,12 @@ function impresion(elemento, regla) {
               style="max-width: 120px; line-height: 1.2;">${nombre}</p>
           </div>
           <div class="d-flex align-items-center gap-2 flex-shrink-0">
-            <span class="fs-5 text-info fw-semibold precio-item"
-            data-precio="${precio}"> 
+            <span class="fs-5 text-info fw-semibold"> 
             $${precio}</span>
           </div>
           <button class="d-flex align-items-center gap-2 flex-shrink-0 btn btn-outline-danger btn-eliminar"
-          data-nombre="${nombre}">
+          data-nombre="${nombre}"
+          data-precio="${precio}">
             <img src="https://images.icon-icons.com/2249/PNG/512/delete_forever_outline_icon_139694.png"
               width="22px" height="22px" alt="">
           </button>
@@ -207,10 +207,6 @@ function comprobacion(propiedad) {
   return tipoPropiedad
 }
 
-/* fetch('https://www.steamgriddb.com/api/v2')
-  .then(response => response.json())
-  .then(data => console.log(data)); */
-
 /* ==========================================================================
    5. ESCUCHADORES DE EVENTOS (Event Listeners)
    ========================================================================== */
@@ -218,13 +214,14 @@ function comprobacion(propiedad) {
 
 inventario.addEventListener('click', (event) => {
   const boton = event.target.closest('.btn-compra');
+  totalCarrito += Number(boton.dataset.precio);
   if (boton) {
     contadorCarrito += 1;
     CantidadCarrito.innerText = contadorCarrito;
     const juego = boton.dataset.nombre;
+    carritoTotal.innerText = `$${totalCarrito}`;
     itemSeleccionados.push(juego);
     tarjetas(itemSeleccionados);
-    carritoTotal.innerText = `$${totalCarrito}`;
   }
 });
 filtros.addEventListener('click', (event) => {
@@ -278,21 +275,27 @@ filtros.addEventListener('click', (event) => {
 });
 carritoCompleto.addEventListener('click', (event) => {
   const boton = event.target.closest('.btn-eliminar');
-  const precioItems = event.target.closest('.precio-item')
+  if (contadorCarrito <= 0) {
+    itemsCarrito.innerHTML = `<p class="fs-6 text-white fw-bold m-0 text-center">No hay productos</p>`;
+  }
   if (boton) {
-    console.log(precioItems)
     const juego = boton.dataset.nombre;
+    const precio = boton.dataset.precio;
     const borrar = itemSeleccionados.findIndex((elemento) => elemento == juego)
-    if (contadorCarrito > 0) {
-      contadorCarrito -= 1;
+    contadorCarrito -= 1;
+    if (contadorCarrito >= 2) {
       CantidadCarrito.innerText = contadorCarrito;
-    } else if (contadorCarrito = 0) {
-      CantidadCarrito.innerText = ""
+    } else if (contadorCarrito == 0) {
+      itemsCarrito.innerHTML = `<p class="fs-6 text-white fw-bold m-0 text-center">No hay productos</p>`;
+      CantidadCarrito.innerText = "";
     }
+
     if (borrar !== -1) {
       itemSeleccionados.splice(borrar, 1)
+      totalCarrito -= Number(precio);
+      carritoTotal.innerText = `$${totalCarrito}`;
+      tarjetas(itemSeleccionados);
     }
-    tarjetas(itemSeleccionados);
   }
 });
 /* ==========================================================================
