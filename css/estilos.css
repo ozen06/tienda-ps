@@ -139,3 +139,10 @@ footer p {
   /* El color cyan de info de Bootstrap */
   border-radius: 4px;
 }
+
+.fondo-sutil {
+  /* Indicamos que el verde termine temprano (al 30%) y el resto sea blanco */
+  background: radial-gradient(circle at top right, rgba(102, 192, 244, 0.15), transparent 35%), linear-gradient(135deg, #7abe96 0%, #2cec35 50%, #0aff3f 100%);
+  width: 33%;
+  height: 74%;
+}

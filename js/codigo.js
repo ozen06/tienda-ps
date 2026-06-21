@@ -19,12 +19,20 @@ const products = [
   { Nombre: "Halo Infinite", Precio: 40, Genero: "Shooter", Plataforma: "Xbox" },
   { Nombre: "Forza Horizon 5", Precio: 45, Genero: "Carreras", Plataforma: "Xbox" }
 ];
+const descuentos = [
+  { Descuento: 33, juegos: [] },
+  { Descuento: 50, juegos: [] },
+  { Descuento: 75, juegos: [] },
+  { Descuento: 80, juegos: [] },
+]
 
 // Estado dinámico de la app (variables que cambian con la interacción del usuario)
 const datos = [[], [], [], []];
 const filtrosActivos = [];
 let itemFiltrados = [];
+let itemSeleccionados = []; //apartir de button da con el nombre del juego ahi accedo propiedades
 let contadorCarrito = 0;
+let totalCarrito = 0;
 
 /* ==========================================================================
    2. SELECCIÓN DE ELEMENTOS DEL DOM (Nodos HTML)
@@ -35,91 +43,163 @@ const filtros = document.getElementById('filtros');
 const listaGeneros = document.getElementById('f-generos');
 const listaPrecio = document.getElementById('f-precio');
 const listaPlataforma = document.getElementById('f-plataforma');
-const carrito = document.getElementById('Carrito');
+const listaDescuentos = document.getElementById('f-descuentos');
+const carritoCompleto = document.getElementById('Carrito');
+const carritoVacio = document.getElementById('lista-carrito-dropdown');
+const CantidadCarrito = document.getElementById('cantidad-items-carrito');
+const itemsCarrito = document.getElementById('items-carrito');
+const carritoTotal = document.getElementById('total-carrito');
 
 /* ==========================================================================
    3. LOGICA PRINCIPAL / RENDERIZADO (Funciones que dibujan en pantalla)
    ========================================================================== */
 // Función encargada exclusivamente de pintar las tarjetas en el HTML
 function tarjetas(arreglo) {
-  inventario.innerHTML = "";
-  arreglo.forEach((elemento, indice) => {
-    const nombre = elemento.Nombre;
-    const precio = elemento.Precio;
-    const plataforma = elemento.Plataforma;
-    impresion(nombre, precio, plataforma);
-  })
+  if (arreglo !== itemSeleccionados && arreglo[1] !== "borrar-carrito") {
+    inventario.innerHTML = "";
+    for (const elemento of arreglo) {
+      impresion(elemento, "inventario")
+    }
+  } else if (arreglo === itemSeleccionados) {
+    itemsCarrito.innerHTML = "";
+    for (const item of arreglo) {
+      products.forEach(producto => {
+        if (producto.Nombre == item) {
+          impresion(producto);
+        }
+      });
+    }
+  }
 }
 
-function impresion(nombre, precio, plataforma) {
-  if (plataforma === 'Steam') {
-    inventario.innerHTML += `
-        <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
-                <div class="cards-${plataforma.toLowerCase()} overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow">
-                    <div class="d-flex justify-content-center align-items-center">
-                        <img class="w-50 img-fluid" src="../img/plataformas/steam-1.svg" alt="${plataforma}">
-                    </div>
-                    <div class="d-flex justify-content-center align-items-center my-2">
-                        <img class="rounded-2 w-100 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
-                    </div>
-                    <p class="fs-5 text-white fw-bold m-0 text-start">${nombre}</p>
-                    <button class="rounded btn btn-outline-secondary text-decoration-none" color>
-                        <p class="fs-4 text-info fw-semibold m-0 text-center btn-compra">${'$' + precio}</p>
-                    </button>
-                </div>
+function impresion(elemento, regla) {
+  const url = {
+    Steam: "../img/plataformas/steam-1.svg", Epic: "https://static.cdnlogo.com/logos/e/88/epic-games.svg",
+    PSN: "https://static.cdnlogo.com/logos/p/56/playstation-and-wordmark.svg", Xbox: "https://static.cdnlogo.com/logos/x/1/xbox.svg"
+  }
+  const nombre = elemento.Nombre;
+  const plataforma = elemento.Plataforma;
+  let precio;
+  let tamañoBoton = "";
+  let descuento;
+  if (elemento.Descuento) {
+    ahorro = elemento.Precio * (1 - (elemento.Descuento / 100));
+    precio = Math.round(ahorro);
+    tamañoBoton = "col-5 m-1";
+    descuentoBOTON = elemento.Descuento;
+  } else {
+    precio = elemento.Precio;
+  }
+
+  if (regla == "inventario") {
+    if (elemento.Descuento) {
+      inventario.innerHTML += `
+    <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
+        <div class="cards-${plataforma.toLowerCase()} overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow ">
+            <div class="d-flex justify-content-center align-items-center">
+                <img class="w-50 img-fluid" src="${url[plataforma]}" alt="${plataforma}">
             </div>
-    `;
-  } else if (plataforma === 'Epic') {
-    inventario.innerHTML += `
-        <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
-                <div class="cards-${plataforma.toLowerCase()} overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow">
-                    <div class="d-flex justify-content-center align-items-center">
-                        <img class="w-50 img-fluid" src="https://static.cdnlogo.com/logos/e/88/epic-games.svg" alt="${plataforma}">
-                    </div>
-                    <div class="d-flex justify-content-center align-items-center my-2">
-                        <img class="rounded-2 w-100 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
-                    </div>
-                    <p class="fs-5 text-white fw-bold m-0 text-start">${nombre}</p>
-                    <button class="rounded btn btn-outline-secondary text-decoration-none" color>
-                        <p class="fs-4 text-info fw-semibold m-0 text-center btn-compra">${'$' + precio}</p>
-                    </button>
-                </div>
+            <div class="d-flex justify-content-center align-items-center my-2">
+                <img class="rounded-2 w-100 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
             </div>
-    `;
-  } else if (plataforma === 'PSN') {
-    inventario.innerHTML += `
-        <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
-                <div class="cards-${plataforma.toLowerCase()} overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow">
-                    <div class="d-flex justify-content-center align-items-center">
-                        <img class="w-50 img-fluid" src="https://static.cdnlogo.com/logos/p/56/playstation-and-wordmark.svg" alt="${plataforma}">
-                    </div>
-                    <div class="d-flex justify-content-center align-items-center my-2">
-                        <img class="rounded-2 w-100 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
-                    </div>
-                    <p class="fs-5 text-white fw-bold m-0 text-start">${nombre}</p>
-                    <button class="rounded btn btn-outline-secondary text-decoration-none" color>
-                        <p class="fs-4 text-info fw-semibold m-0 text-center btn-compra">${'$' + precio}</p>
-                    </button>
-                </div>
+            <p class="fs-5 text-white fw-bold m-0 text-start">${nombre}</p>
+            <div class="d-flex justify-content-center align-items-center">
+            <button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil" disabled>-${descuentoBOTON}%</button>
+            <button class="align-items-center rounded btn btn-outline-info text-decoration-none mt-auto btn-compra ${tamañoBoton}"
+                    data-nombre="${nombre}" 
+                    data-precio="${precio}"> 
+                <span class="fs-5 fw-semibold m-0 text-center">$${precio}</span>
+            </button>
             </div>
-    `;
-  } else if (plataforma === "Xbox") {
-    inventario.innerHTML += `
-        <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
-                <div class="cards-${plataforma.toLowerCase()} overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow">
-                    <div class="d-flex justify-content-center align-items-center">
-                        <img class="w-50 img-fluid" src="https://static.cdnlogo.com/logos/x/1/xbox.svg" alt="${plataforma}">
-                    </div>
-                    <div class="d-flex justify-content-center align-items-center my-2">
-                        <img class="rounded-2 w-100 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
-                    </div>
-                    <p class="fs-5 text-white fw-bold m-0 text-start">${nombre}</p>
-                    <button class="rounded btn btn-outline-secondary text-decoration-none" color>
-                        <p class="fs-4 text-info fw-semibold m-0 text-center btn-compra">${'$' + precio}</p>
-                    </button>
-                </div>
+        </div>
+    </div>
+  `;
+    } else {
+      inventario.innerHTML += `
+    <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
+        <div class="cards-${plataforma.toLowerCase()} overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow ">
+            <div class="d-flex justify-content-center align-items-center">
+                <img class="w-50 img-fluid" src="${url[plataforma]}" alt="${plataforma}">
             </div>
-    `;
+            <div class="d-flex justify-content-center align-items-center my-2">
+                <img class="rounded-2 w-100 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
+            </div>
+            <p class="fs-5 text-white fw-bold m-0 text-start">${nombre}</p>
+            <button class="align-items-center rounded btn btn-outline-info text-decoration-none mt-auto btn-compra ${tamañoBoton}"
+                    data-nombre="${nombre}" 
+                    data-precio="${precio}"> 
+                <span class="fs-5 fw-semibold m-0 text-center">$${precio}</span>
+            </button>
+        </div>
+    </div>
+  `;
+    }
+  } else {
+    if (elemento.Descuento) {
+      itemsCarrito.innerHTML += `
+      <li class="px-2 py-2 mb-2 border-bottom border-secondary border-opacity-25"
+        style="list-style: none;">
+        <div
+          class="cards-steam overflow-hidden rounded-3 p-2 d-flex align-items-center justify-content-between gap-3 h-100 shadow-sm">
+          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+            style="width: 75px; height: 75px;">
+            <img class="img-fluid" src="${url[plataforma]}" alt="${plataforma}">
+          </div>
+          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+            style="width: 50px; height: 40px;">
+            <img class="rounded-1 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
+          </div>
+          <div class="flex-grow-1 text-start">
+            <p class="fs-6 text-white fw-bold m-0 text-truncate"
+              style="max-width: 120px; line-height: 1.2;">${nombre}</p>
+          </div>
+          <button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil" disabled>-${descuentoBOTON}%</button>
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <span class="fs-5 text-info fw-semibold"> 
+            $${precio}</span>
+          </div>
+          <button class="d-flex align-items-center gap-2 flex-shrink-0 btn btn-outline-danger btn-eliminar"
+          data-nombre="${nombre}"
+          data-precio="${precio}">
+            <img src="https://images.icon-icons.com/2249/PNG/512/delete_forever_outline_icon_139694.png"
+              width="22px" height="22px" alt="">
+          </button>
+        </div>
+      </li>
+  `;
+    } else {
+      itemsCarrito.innerHTML += `
+      <li class="px-2 py-2 mb-2 border-bottom border-secondary border-opacity-25"
+        style="list-style: none;">
+        <div
+          class="cards-steam overflow-hidden rounded-3 p-2 d-flex align-items-center justify-content-between gap-3 h-100 shadow-sm">
+          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+            style="width: 75px; height: 75px;">
+            <img class="img-fluid" src="${url[plataforma]}" alt="${plataforma}">
+          </div>
+          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+            style="width: 50px; height: 40px;">
+            <img class="rounded-1 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
+          </div>
+          <div class="flex-grow-1 text-start">
+            <p class="fs-6 text-white fw-bold m-0 text-truncate"
+              style="max-width: 120px; line-height: 1.2;">${nombre}</p>
+          </div>
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <span class="fs-5 text-info fw-semibold"> 
+            $${precio}</span>
+          </div>
+          <button class="d-flex align-items-center gap-2 flex-shrink-0 btn btn-outline-danger btn-eliminar"
+          data-nombre="${nombre}"
+          data-precio="${precio}">
+            <img src="https://images.icon-icons.com/2249/PNG/512/delete_forever_outline_icon_139694.png"
+              width="22px" height="22px" alt="">
+          </button>
+        </div>
+      </li>
+  `;
+    }
+
   }
 }
 
@@ -139,6 +219,48 @@ function filtrado(datos) {
         <li><label class="dropdown-item"><input type="radio" name="plataforma-unica" value="${elemento}"> ${elemento}</label></li>
     `;
   })
+  descuentos.forEach((elemento) => {
+    if ((elemento.juegos).length >= 1) {
+      listaDescuentos.innerHTML += `
+        <li><label class="dropdown-item"><input type="radio" name="descuento-unico" value="${elemento.Descuento}%"> ${elemento.Descuento}%</label></li>
+    `;
+    }
+  })
+}
+
+function descuentosFiltro() {
+  descuentos33 = descuentos[0].juegos;
+  descuentos50 = descuentos[1].juegos;
+  descuentos75 = descuentos[2].juegos;
+  descuentos80 = descuentos[3].juegos;
+
+  products.forEach(juego => {
+    if (Array.isArray(juego.Genero)) {
+      (juego.Genero).forEach(elemento => {
+        if (elemento == "Accion") {
+          juego.Descuento = 33;
+          descuentos33.push(juego)
+        } else if (elemento == "Aventura") {
+          juego.Descuento = 50;
+          descuentos50.push(juego)
+        } else if (elemento == "Shooter") {
+          juego.Descuento = 80;
+          descuentos80.push(juego)
+        }
+      });
+    } else {
+      if (juego.Genero == "Accion") {
+        juego.Descuento = 33;
+        descuentos33.push(juego)
+      } else if (juego.Genero == "Aventura") {
+        juego.Descuento = 50;
+        descuentos50.push(juego)
+      } else if (juego.Genero == "Shooter") {
+        juego.Descuento = 80;
+        descuentos80.push(juego)
+      }
+    }
+  });
 }
 
 /* ==========================================================================
@@ -150,8 +272,6 @@ ordenamiento(datos[0], "Nombre");
 ordenamiento(datos[1], "Genero");
 ordenamiento(datos[2], "Precio");
 ordenamiento(datos[3], "Plataforma");
-
-console.log(products[1].Genero)
 
 function ordenamiento(arreglo, propiedad) {
   products.map((elemento) => {
@@ -182,32 +302,39 @@ function ordenamiento(arreglo, propiedad) {
 
 function comprobacion(propiedad) {
   let tipoPropiedad = "";
-  datos[0].forEach(elemento => {
-    if (elemento === propiedad) {
-      tipoPropiedad = "Nombre"
-    }
-  })
-  datos[1].forEach(elemento => {
-    if (elemento === propiedad) {
-      tipoPropiedad = "Genero"
-    }
-  })
-  datos[2].forEach(elemento => {
-    if (elemento === Number(propiedad)) {
-      tipoPropiedad = "Precio"
-    }
-  })
-  datos[3].forEach(elemento => {
-    if (elemento === propiedad) {
-      tipoPropiedad = "Plataforma"
-    }
-  })
+  if (!String(propiedad).includes("%")) {
+    datos[0].forEach(elemento => {
+      if (elemento === propiedad) {
+        tipoPropiedad = "Nombre"
+      }
+    })
+    datos[1].forEach(elemento => {
+      if (elemento === propiedad) {
+        tipoPropiedad = "Genero"
+      }
+    })
+    datos[2].forEach(elemento => {
+      if (elemento === Number(propiedad)) {
+        tipoPropiedad = "Precio"
+      }
+    })
+    datos[3].forEach(elemento => {
+      if (elemento === propiedad) {
+        tipoPropiedad = "Plataforma"
+      }
+    })
+  } else {
+    descuentos.forEach((elemento) => {
+      if ((elemento.juegos).length >= 1) {
+        if (elemento.Descuento == String(propiedad).slice(0, 2)) {
+          tipoPropiedad = "Descuento"
+        }
+      }
+    })
+  }
+
   return tipoPropiedad
 }
-
-/* fetch('https://www.steamgriddb.com/api/v2')
-  .then(response => response.json())
-  .then(data => console.log(data)); */
 
 /* ==========================================================================
    5. ESCUCHADORES DE EVENTOS (Event Listeners)
@@ -215,9 +342,15 @@ function comprobacion(propiedad) {
 // Captura de clics, inputs, envíos de formularios. Van al final porque llaman a las funciones de arriba.
 
 inventario.addEventListener('click', (event) => {
-  if (event.target.closest('.btn-compra')) {
+  const boton = event.target.closest('.btn-compra');
+  totalCarrito += Number(boton.dataset.precio);
+  if (boton) {
     contadorCarrito += 1;
-    carrito.innerText = contadorCarrito;
+    CantidadCarrito.innerText = contadorCarrito;
+    const juego = boton.dataset.nombre;
+    carritoTotal.innerText = `$${totalCarrito}`;
+    itemSeleccionados.push(juego);
+    tarjetas(itemSeleccionados);
   }
 });
 filtros.addEventListener('click', (event) => {
@@ -226,15 +359,9 @@ filtros.addEventListener('click', (event) => {
     const actual = elemento.value;
     dato = comprobacion(actual);
 
-    if(dato === "Plataforma"){
-      filtrosActivos.forEach((elemento, indice) =>{
-        if (comprobacion(elemento) === "Plataforma"){
-          filtrosActivos.splice(indice, 1)
-        }
-      })
-    } else if(dato === "Precio"){
-      filtrosActivos.forEach((elemento, indice) =>{
-        if (comprobacion(elemento) === "Precio"){
+    if (["Plataforma", "Precio", "Descuento", "Genero"].includes(dato)) {
+      filtrosActivos.forEach((elemento, indice) => {
+        if (comprobacion(elemento) === dato) {
           filtrosActivos.splice(indice, 1)
         }
       })
@@ -247,7 +374,7 @@ filtros.addEventListener('click', (event) => {
       filtrosActivos.splice(borrar, 1);
     }
 
-    if (filtrosActivos.length === 0) {
+    if (filtrosActivos.length == 0) {
       tarjetas(products);
       return;
     }
@@ -255,18 +382,49 @@ filtros.addEventListener('click', (event) => {
     itemFiltrados = products.filter(juego => {
       return filtrosActivos.every((filtro) => {
         dato = comprobacion(filtro)
-        if (dato == "Genero") {
-          return juego.Genero.includes(filtro)
-        } else if (dato == "Precio") {
-          return juego.Precio == Number(filtro)
-        } else if (dato == "Plataforma") {
-          return juego[dato] === filtro
+        if (["Genero", "Plataforma"].includes(dato)) {
+          return juego[dato].includes(filtro)
+        } else if ("Precio" == dato) {
+          return juego[dato] == Number(filtro)
+        } else if ("Descuento" == dato) {
+          return juego[dato] == String(filtro).slice(0, 2)
         }
+
         return juego[dato] === filtro
       })
     });
 
+    if (filtrosActivos.length > 0 && itemFiltrados.length == 0) {
+      inventario.innerHTML = `<p class="fs-1 text-white fw-bold m-0 text-center">No hay coincidencias.</p>`;
+      return;
+    }
+
     tarjetas(itemFiltrados)
+  }
+});
+carritoCompleto.addEventListener('click', (event) => {
+  const boton = event.target.closest('.btn-eliminar');
+  if (contadorCarrito <= 0) {
+    itemsCarrito.innerHTML = `<p class="fs-6 text-white fw-bold m-0 text-center">No hay productos</p>`;
+  }
+  if (boton) {
+    const juego = boton.dataset.nombre;
+    const precio = boton.dataset.precio;
+    const borrar = itemSeleccionados.findIndex((elemento) => elemento == juego)
+    contadorCarrito -= 1;
+    if (contadorCarrito >= 2) {
+      CantidadCarrito.innerText = contadorCarrito;
+    } else if (contadorCarrito == 0) {
+      itemsCarrito.innerHTML = `<p class="fs-6 text-white fw-bold m-0 text-center">No hay productos</p>`;
+      CantidadCarrito.innerText = "";
+    }
+
+    if (borrar !== -1) {
+      itemSeleccionados.splice(borrar, 1)
+      totalCarrito -= Number(precio);
+      carritoTotal.innerText = `$${totalCarrito}`;
+      tarjetas(itemSeleccionados);
+    }
   }
 });
 /* ==========================================================================
@@ -274,6 +432,7 @@ filtros.addEventListener('click', (event) => {
    ========================================================================== */
 // Código que se ejecuta apenas se termina de cargar la página para que la tienda no empiece vacía
 document.addEventListener('DOMContentLoaded', () => {
+  descuentosFiltro();
   tarjetas(products);
   filtrado(datos);
 });
