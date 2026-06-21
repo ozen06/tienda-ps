@@ -146,3 +146,7 @@ footer p {
   width: 33%;
   height: 74%;
 }
+
+.fondo-checkout {
+  background: radial-gradient(circle at top right, rgba(102, 192, 244, 0.15), transparent 35%), linear-gradient(135deg, #171a21 0%, #2958d1 50%, #0d537e 100%);
+}

@@ -49,6 +49,8 @@ const carritoVacio = document.getElementById('lista-carrito-dropdown');
 const CantidadCarrito = document.getElementById('cantidad-items-carrito');
 const itemsCarrito = document.getElementById('items-carrito');
 const carritoTotal = document.getElementById('total-carrito');
+const pagina3 = document.getElementById('pagina3');
+const itemsCheckout = document.getElementById('VXvoGIf1A');
 
 /* ==========================================================================
    3. LOGICA PRINCIPAL / RENDERIZADO (Funciones que dibujan en pantalla)
@@ -150,10 +152,10 @@ function impresion(elemento, regla) {
             <img class="rounded-1 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
           </div>
           <div class="flex-grow-1 text-start">
-            <p class="fs-6 text-white fw-bold m-0 text-truncate"
+            <p class="fs-6 text-white fw-bold m-0 text-truncate mx-auto"
               style="max-width: 120px; line-height: 1.2;">${nombre}</p>
           </div>
-          <button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil" disabled>-${descuentoBOTON}%</button>
+          <button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil" disabled style"width: 20px;">-${descuentoBOTON}%</button>
           <div class="d-flex align-items-center gap-2 flex-shrink-0">
             <span class="fs-5 text-info fw-semibold"> 
             $${precio}</span>
@@ -201,6 +203,7 @@ function impresion(elemento, regla) {
     }
 
   }
+  localStorage.setItem('itemsCarrito', JSON.stringify(itemsCarrito.innerHTML));
 }
 
 function filtrado(datos) {
@@ -261,6 +264,7 @@ function descuentosFiltro() {
       }
     }
   });
+  localStorage.setItem('productos', JSON.stringify(products));
 }
 
 /* ==========================================================================
@@ -340,99 +344,149 @@ function comprobacion(propiedad) {
    5. ESCUCHADORES DE EVENTOS (Event Listeners)
    ========================================================================== */
 // Captura de clics, inputs, envíos de formularios. Van al final porque llaman a las funciones de arriba.
-
-inventario.addEventListener('click', (event) => {
-  const boton = event.target.closest('.btn-compra');
-  totalCarrito += Number(boton.dataset.precio);
-  if (boton) {
-    contadorCarrito += 1;
-    CantidadCarrito.innerText = contadorCarrito;
-    const juego = boton.dataset.nombre;
-    carritoTotal.innerText = `$${totalCarrito}`;
-    itemSeleccionados.push(juego);
-    tarjetas(itemSeleccionados);
-  }
-});
-filtros.addEventListener('click', (event) => {
-  const elemento = event.target;
-  if (elemento.tagName == "INPUT") {
-    const actual = elemento.value;
-    dato = comprobacion(actual);
-
-    if (["Plataforma", "Precio", "Descuento", "Genero"].includes(dato)) {
-      filtrosActivos.forEach((elemento, indice) => {
-        if (comprobacion(elemento) === dato) {
-          filtrosActivos.splice(indice, 1)
-        }
-      })
-    }
-
-    const borrar = filtrosActivos.findIndex((elemento) => elemento == actual);
-    if (borrar == -1) {
-      filtrosActivos.push(actual);
-    } else {
-      filtrosActivos.splice(borrar, 1);
-    }
-
-    if (filtrosActivos.length == 0) {
-      tarjetas(products);
-      return;
-    }
-
-    itemFiltrados = products.filter(juego => {
-      return filtrosActivos.every((filtro) => {
-        dato = comprobacion(filtro)
-        if (["Genero", "Plataforma"].includes(dato)) {
-          return juego[dato].includes(filtro)
-        } else if ("Precio" == dato) {
-          return juego[dato] == Number(filtro)
-        } else if ("Descuento" == dato) {
-          return juego[dato] == String(filtro).slice(0, 2)
-        }
-
-        return juego[dato] === filtro
-      })
-    });
-
-    if (filtrosActivos.length > 0 && itemFiltrados.length == 0) {
-      inventario.innerHTML = `<p class="fs-1 text-white fw-bold m-0 text-center">No hay coincidencias.</p>`;
-      return;
-    }
-
-    tarjetas(itemFiltrados)
-  }
-});
-carritoCompleto.addEventListener('click', (event) => {
-  const boton = event.target.closest('.btn-eliminar');
-  if (contadorCarrito <= 0) {
-    itemsCarrito.innerHTML = `<p class="fs-6 text-white fw-bold m-0 text-center">No hay productos</p>`;
-  }
-  if (boton) {
-    const juego = boton.dataset.nombre;
-    const precio = boton.dataset.precio;
-    const borrar = itemSeleccionados.findIndex((elemento) => elemento == juego)
-    contadorCarrito -= 1;
-    if (contadorCarrito >= 2) {
+if (inventario) {
+  inventario.addEventListener('click', (event) => {
+    const boton = event.target.closest('.btn-compra');
+    totalCarrito += Number(boton.dataset.precio);
+    if (boton) {
+      contadorCarrito += 1;
       CantidadCarrito.innerText = contadorCarrito;
-    } else if (contadorCarrito == 0) {
-      itemsCarrito.innerHTML = `<p class="fs-6 text-white fw-bold m-0 text-center">No hay productos</p>`;
-      CantidadCarrito.innerText = "";
-    }
-
-    if (borrar !== -1) {
-      itemSeleccionados.splice(borrar, 1)
-      totalCarrito -= Number(precio);
+      const juego = boton.dataset.nombre;
       carritoTotal.innerText = `$${totalCarrito}`;
+      localStorage.setItem('precioCarritoTotal', JSON.stringify(totalCarrito));
+      itemSeleccionados.push(juego);
+      localStorage.setItem('itemSeleccionados', JSON.stringify(itemSeleccionados));
       tarjetas(itemSeleccionados);
     }
-  }
-});
+  });
+  filtros.addEventListener('click', (event) => {
+    const elemento = event.target;
+    if (elemento.tagName == "INPUT") {
+      const actual = elemento.value;
+      dato = comprobacion(actual);
+
+      if (["Plataforma", "Precio", "Descuento", "Genero"].includes(dato)) {
+        filtrosActivos.forEach((elemento, indice) => {
+          if (comprobacion(elemento) === dato) {
+            filtrosActivos.splice(indice, 1)
+          }
+        })
+      }
+
+      const borrar = filtrosActivos.findIndex((elemento) => elemento == actual);
+      if (borrar == -1) {
+        filtrosActivos.push(actual);
+      } else {
+        filtrosActivos.splice(borrar, 1);
+      }
+
+      if (filtrosActivos.length == 0) {
+        tarjetas(products);
+        return;
+      }
+
+      itemFiltrados = products.filter(juego => {
+        return filtrosActivos.every((filtro) => {
+          dato = comprobacion(filtro)
+          if (["Genero", "Plataforma"].includes(dato)) {
+            return juego[dato].includes(filtro)
+          } else if ("Precio" == dato) {
+            return juego[dato] == Number(filtro)
+          } else if ("Descuento" == dato) {
+            return juego[dato] == String(filtro).slice(0, 2)
+          }
+
+          return juego[dato] === filtro
+        })
+      });
+
+      if (filtrosActivos.length > 0 && itemFiltrados.length == 0) {
+        inventario.innerHTML = `<p class="fs-1 text-white fw-bold m-0 text-center">No hay coincidencias.</p>`;
+        return;
+      }
+
+      tarjetas(itemFiltrados)
+    }
+  });
+  carritoCompleto.addEventListener('click', (event) => {
+    const boton = event.target.closest('.btn-eliminar');
+    if (contadorCarrito <= 0) {
+      itemsCarrito.innerHTML = `<p class="fs-6 text-white fw-bold m-0 text-center">No hay productos</p>`;
+    }
+    if (boton) {
+      const juego = boton.dataset.nombre;
+      const precio = boton.dataset.precio;
+      const borrar = itemSeleccionados.findIndex((elemento) => elemento == juego)
+      contadorCarrito -= 1;
+      if (contadorCarrito >= 2) {
+        CantidadCarrito.innerText = contadorCarrito;
+      } else if (contadorCarrito == 0) {
+        itemsCarrito.innerHTML = `<p class="fs-6 text-white fw-bold m-0 text-center">No hay productos</p>`;
+        CantidadCarrito.innerText = "";
+      }
+
+      if (borrar !== -1) {
+        itemSeleccionados.splice(borrar, 1)
+        totalCarrito -= Number(precio);
+        carritoTotal.innerText = `$${totalCarrito}`;
+        localStorage.setItem('itemsCarrito', JSON.stringify(itemsCarrito.innerHTML));
+        localStorage.setItem('precioCarritoTotal', JSON.stringify(totalCarrito));
+        tarjetas(itemSeleccionados);
+      }
+    }
+  });
+}
+
 /* ==========================================================================
    6. INICIALIZACIÓN DE LA APLICACIÓN (Punto de arranque)
    ========================================================================== */
 // Código que se ejecuta apenas se termina de cargar la página para que la tienda no empiece vacía
-document.addEventListener('DOMContentLoaded', () => {
-  descuentosFiltro();
-  tarjetas(products);
-  filtrado(datos);
-});
+
+if (inventario) {
+  document.addEventListener('DOMContentLoaded', () => {
+    descuentosFiltro();
+    tarjetas(products);
+    filtrado(datos);
+  });
+}
+
+if (pagina3) {
+  // 1. Intentamos levantar la información del LocalStorage
+  const productos = localStorage.getItem('productos');
+  const item = localStorage.getItem('itemSeleccionados');
+  const itemCarrito = localStorage.getItem('itemsCarrito');
+  const precioTotalCarrito = localStorage.getItem('precioCarritoTotal');
+  // 2. Declaramos la variable de nuestro carrito
+  let productosCheckout;
+  let arregloItems;
+  let itemCarro;
+
+  if (productos || item || itemCarrito || precioTotalCarrito) {
+    // Si había datos, los transformamos de JSON a un arreglo real de JS
+    productosCheckout = JSON.parse(productos);
+    arregloItems = JSON.parse(item);
+    itemCarro = JSON.parse(itemCarrito);
+    precioTotal = JSON.parse(precioTotalCarrito);
+  } else {
+    // Si la caja estaba vacía (primera visita), inicializamos el carrito vacío
+    productosCheckout = [];
+    arregloItems = [];
+    itemCarro = [];
+    precioTotal = [];
+  }
+
+  console.log(productosCheckout); // Conserva tus datos intactos de la página anterior
+  console.log(arregloItems);
+  console.log(itemCarro);
+  console.log(precioTotal);
+
+  if (itemsCheckout) {
+    itemsCheckout.innerHTML += `${itemCarro}`;
+    itemsCheckout.innerHTML += `<div id="footer-carrito" class="">
+                    <li class="d-flex justify-content-between align-items-center mb-3 row">
+                        <span class="fs-3 fw-bold text-black">Subtotal:</span>
+                        <span id="total-carrito" class="text-info fw-bold fs-3">$${precioTotal}</span>
+                    </li>
+                </div>`;
+  }
+}
