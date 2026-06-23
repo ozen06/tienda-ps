@@ -50,8 +50,6 @@ const CantidadCarrito = document.getElementById('cantidad-items-carrito');
 const itemsCarrito = document.getElementById('items-carrito');
 const carritoTotal = document.getElementById('total-carrito');
 const pagina3 = document.getElementById('pagina3');
-const itemsCheckout = document.getElementById('VXvoGIf1A');
-
 /* ==========================================================================
    3. LOGICA PRINCIPAL / RENDERIZADO (Funciones que dibujan en pantalla)
    ========================================================================== */
@@ -152,19 +150,22 @@ function impresion(elemento, regla) {
             <img class="rounded-1 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
           </div>
           <div class="flex-grow-1 text-start">
-            <p class="fs-6 text-white fw-bold m-0 text-truncate mx-auto"
-              style="max-width: 120px; line-height: 1.2;">${nombre}</p>
+            <p class="fs-6 text-white fw-bold m-0 mx-auto"
+              style="max-width: 110px; line-height: 1.2;">${nombre}</p>
           </div>
-          <button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil" disabled style"width: 20px;">-${descuentoBOTON}%</button>
+          <button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil" disabled style"width: auto;">-${descuentoBOTON}%</button>
           <div class="d-flex align-items-center gap-2 flex-shrink-0">
             <span class="fs-5 text-info fw-semibold"> 
             $${precio}</span>
           </div>
           <button class="d-flex align-items-center gap-2 flex-shrink-0 btn btn-outline-danger btn-eliminar"
           data-nombre="${nombre}"
-          data-precio="${precio}">
-            <img src="https://images.icon-icons.com/2249/PNG/512/delete_forever_outline_icon_139694.png"
-              width="22px" height="22px" alt="">
+          data-precio="${precio}"> 
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+</svg>
+            
           </button>
         </div>
       </li>
@@ -194,8 +195,10 @@ function impresion(elemento, regla) {
           <button class="d-flex align-items-center gap-2 flex-shrink-0 btn btn-outline-danger btn-eliminar"
           data-nombre="${nombre}"
           data-precio="${precio}">
-            <img src="https://images.icon-icons.com/2249/PNG/512/delete_forever_outline_icon_139694.png"
-              width="22px" height="22px" alt="">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+</svg>
           </button>
         </div>
       </li>
@@ -451,42 +454,145 @@ if (inventario) {
 }
 
 if (pagina3) {
+  const textoCheckout = document.getElementById('VXvoGIf1A');
+  const itemsCheckout = document.getElementById('VXvoGIf1B');
   // 1. Intentamos levantar la información del LocalStorage
   const productos = localStorage.getItem('productos');
   const item = localStorage.getItem('itemSeleccionados');
   const itemCarrito = localStorage.getItem('itemsCarrito');
   const precioTotalCarrito = localStorage.getItem('precioCarritoTotal');
-  // 2. Declaramos la variable de nuestro carrito
-  let productosCheckout;
-  let arregloItems;
-  let itemCarro;
-
-  if (productos || item || itemCarrito || precioTotalCarrito) {
-    // Si había datos, los transformamos de JSON a un arreglo real de JS
-    productosCheckout = JSON.parse(productos);
-    arregloItems = JSON.parse(item);
-    itemCarro = JSON.parse(itemCarrito);
-    precioTotal = JSON.parse(precioTotalCarrito);
-  } else {
-    // Si la caja estaba vacía (primera visita), inicializamos el carrito vacío
-    productosCheckout = [];
-    arregloItems = [];
-    itemCarro = [];
-    precioTotal = [];
+  // 2. Inicializamos las variables con un fallback por si están vacías (Evitamos cortocircuitos)
+  let productosCheckout = productos ? JSON.parse(productos) : [];
+  let arregloItems = item ? JSON.parse(item) : [];
+  let precioTotal = precioTotalCarrito ? JSON.parse(precioTotalCarrito) : 0;
+  let itemCarro = itemCarrito ? JSON.parse(itemCarrito) : 0;
+  let traba = 0;
+  function tarjetasPagina3(arreglo) {
+    itemsCheckout.innerHTML = "";
+    for (const item of arreglo) {
+      productosCheckout.forEach(producto => {
+        if (producto.Nombre == item) {
+          impresionPagina3(producto);
+        }
+      });
+    }
   }
-
-  console.log(productosCheckout); // Conserva tus datos intactos de la página anterior
-  console.log(arregloItems);
-  console.log(itemCarro);
-  console.log(precioTotal);
-
-  if (itemsCheckout) {
-    itemsCheckout.innerHTML += `${itemCarro}`;
-    itemsCheckout.innerHTML += `<div id="footer-carrito" class="">
-                    <li class="d-flex justify-content-between align-items-center mb-3 row">
-                        <span class="fs-3 fw-bold text-black">Subtotal:</span>
-                        <span id="total-carrito" class="text-info fw-bold fs-3">$${precioTotal}</span>
-                    </li>
-                </div>`;
+  function impresionPagina3(elemento) {
+    const url = {
+      Steam: "../img/plataformas/steam-1.svg", Epic: "https://static.cdnlogo.com/logos/e/88/epic-games.svg",
+      PSN: "https://static.cdnlogo.com/logos/p/56/playstation-and-wordmark.svg", Xbox: "https://static.cdnlogo.com/logos/x/1/xbox.svg"
+    }
+    const nombre = elemento.Nombre;
+    const plataforma = elemento.Plataforma;
+    let precio;
+    let tamañoBoton = "";
+    let descuento;
+    if (elemento.Descuento) {
+      ahorro = elemento.Precio * (1 - (elemento.Descuento / 100));
+      precio = Math.round(ahorro);
+      tamañoBoton = "col-5 m-1";
+      descuentoBOTON = elemento.Descuento;
+    } else {
+      precio = elemento.Precio;
+    }
+    if (elemento.Descuento) {
+      itemsCheckout.innerHTML += `
+      <li class="px-2 py-2 mb-2 border-bottom border-secondary border-opacity-25"
+        style="list-style: none;">
+        <div
+          class="cards-steam overflow-hidden rounded-3 p-2 d-flex align-items-center justify-content-between gap-3 h-100 shadow-sm">
+          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+            style="width: 75px; height: 75px;">
+            <img class="img-fluid" src="${url[plataforma]}" alt="${plataforma}">
+          </div>
+          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+            style="width: 50px; height: 40px;">
+            <img class="rounded-1 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
+          </div>
+          <div class="flex-grow-1 text-start">
+            <p class="fs-6 text-white fw-bold m-0 mx-auto"
+              style="max-width: 110px; line-height: 1.2;">${nombre}</p>
+          </div>
+          <button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil" disabled style"width: auto;">-${descuentoBOTON}%</button>
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <span class="fs-5 text-info fw-semibold"> 
+            $${precio}</span>
+          </div>
+          <button class="d-flex align-items-center gap-2 flex-shrink-0 btn btn-outline-danger btn-eliminar"
+          data-nombre="${nombre}"
+          data-precio="${precio}"> 
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+</svg>
+            
+          </button>
+        </div>
+      </li>
+  `;
+    } else if (!elemento.Descuento) {
+      itemsCheckout.innerHTML += `
+      <li class="px-2 py-2 mb-2 border-bottom border-secondary border-opacity-25"
+        style="list-style: none;">
+        <div
+          class="cards-steam overflow-hidden rounded-3 p-2 d-flex align-items-center justify-content-between gap-3 h-100 shadow-sm">
+          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+            style="width: 75px; height: 75px;">
+            <img class="img-fluid" src="${url[plataforma]}" alt="${plataforma}">
+          </div>
+          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+            style="width: 50px; height: 40px;">
+            <img class="rounded-1 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
+          </div>
+          <div class="flex-grow-1 text-start">
+            <p class="fs-6 text-white fw-bold m-0 text-truncate"
+              style="max-width: 120px; line-height: 1.2;">${nombre}</p>
+          </div>
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <span class="fs-5 text-info fw-semibold"> 
+            $${precio}</span>
+          </div>
+          <button class="d-flex align-items-center gap-2 flex-shrink-0 btn btn-outline-danger btn-eliminar"
+          data-nombre="${nombre}"
+          data-precio="${precio}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+</svg>
+          </button>
+        </div>
+      </li>
+  `;
+    }
   }
+  if (itemsCheckout && traba == 0) {
+    traba = 1;
+    tarjetasPagina3(arregloItems);
+    const divFooter = document.createElement('div');
+    divFooter.id = "footer-carrito";
+    divFooter.className = "m-3";
+    divFooter.innerHTML = `
+      <li class="d-flex justify-content-between align-items-center mb-3 row" style="list-style: none;">
+          <span class="fs-3 fw-bold text-black">Subtotal:</span>
+          <span id="total-carrito-3" class="text-primary fw-bold fs-3">$${precioTotal}</span>
+      </li>
+    `;
+    textoCheckout.appendChild(divFooter);
+  }
+  textoCheckout.addEventListener('click', (event) => {
+    const boton = event.target.closest('.btn-eliminar');
+    console.log(boton)
+    const carritoTotal = document.getElementById('total-carrito-3');
+    if (boton) {
+      const juego = boton.dataset.nombre;
+      const precio = boton.dataset.precio;
+      const borrar = arregloItems.findIndex((elemento) => elemento == juego)
+      if (borrar !== -1) {
+        arregloItems.splice(borrar, 1)
+        precioTotal -= Number(precio);
+        carritoTotal.innerText = `$${precioTotal}`;
+        tarjetasPagina3(arregloItems);
+      }
+    }
+  });
 }
