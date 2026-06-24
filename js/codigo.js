@@ -209,7 +209,7 @@ function descuentosFiltro() {
 
 async function jsonProductos() {
   // 2. Usamos 'await' para pausar la ejecución hasta que el archivo descargue
-  const respuesta = await fetch('../database/productos.json');
+  const respuesta = await fetch('./database/productos.json');
   // 3. Volvemos a usar 'await' para esperar la conversión a objeto de JS
   const videojuegos = await respuesta.json();
   return videojuegos;
@@ -218,10 +218,9 @@ async function jsonProductos() {
 async function fotoProductos() {
   let portadas = [];
   // 2. Usamos 'await' para pausar la ejecución hasta que el archivo descargue
-  const respuesta = await fetch('../database/games_appid.json');
+  const respuesta = await fetch('./database/games_appid.json');
   // 3. Volvemos a usar 'await' para esperar la conversión a objeto de JS
   const videojuegos = await respuesta.json();
-  // ⚙️ Convertimos el arreglo en un Map usando el appid como clave
   products.forEach(productos => {
     videojuegos.forEach(elemento => {
       if (elemento.name == productos.Nombre) {
