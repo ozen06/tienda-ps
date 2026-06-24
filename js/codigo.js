@@ -82,6 +82,7 @@ async function impresion(elemento, regla) {
     }
   })
 
+
   const tieneDescuento = !!elemento.Descuento;
   const descuentoHTMLInventario = tieneDescuento
     ? `<button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil" disabled>-${descuentoBOTON}%</button>`
@@ -215,12 +216,11 @@ async function jsonProductos() {
 }
 
 async function fotoProductos() {
+  let portadas = [];
   // 2. Usamos 'await' para pausar la ejecución hasta que el archivo descargue
   const respuesta = await fetch('../database/games_appid.json');
   // 3. Volvemos a usar 'await' para esperar la conversión a objeto de JS
   const videojuegos = await respuesta.json();
-  // Variable appI
-  let portadas = [];
   // ⚙️ Convertimos el arreglo en un Map usando el appid como clave
   products.forEach(productos => {
     videojuegos.forEach(elemento => {
@@ -419,6 +419,7 @@ if (inventario) {
   document.addEventListener('DOMContentLoaded', async () => {
     products = await jsonProductos();
     portadasUrl = await fotoProductos();
+    localStorage.setItem('portadasUrl', JSON.stringify(portadasUrl));
     ordenamiento();
     descuentosFiltro();
     tarjetas(products);
