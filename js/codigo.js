@@ -2,37 +2,27 @@
    1. VARIABLES GLOBAL / ESTADO DE LA APLICACIÓN
    ========================================================================== */
 // Datos estáticos o configuraciones
-const products = [
-  // --- STEAM ---
-  { Nombre: "GTA 5", Precio: 5, Genero: "Accion", Plataforma: "Steam" },
-  { Nombre: "Cyberpunk 2077", Precio: 30, Genero: ["RPG", "Accion"], Plataforma: "Steam" },
-
-  // --- PSN ---
-  { Nombre: "The Last of Us Part I", Precio: 70, Genero: "Aventura", Plataforma: "PSN" },
-  { Nombre: "God of War Ragnarok", Precio: 60, Genero: "Accion", Plataforma: "PSN" },
-
-  // --- EPIC GAMES ---
-  { Nombre: "Alan Wake 2", Precio: 50, Genero: "Terror", Plataforma: "Epic" },
-  { Nombre: "Red Dead Redemption 2", Precio: 40, Genero: ["Accion", "Aventura"], Plataforma: "Epic" },
-
-  // --- XBOX ---
-  { Nombre: "Halo Infinite", Precio: 40, Genero: "Shooter", Plataforma: "Xbox" },
-  { Nombre: "Forza Horizon 5", Precio: 45, Genero: "Carreras", Plataforma: "Xbox" }
-];
 const descuentos = [
   { Descuento: 33, juegos: [] },
   { Descuento: 50, juegos: [] },
   { Descuento: 75, juegos: [] },
   { Descuento: 80, juegos: [] },
 ]
+const url = {
+  Steam: "../img/plataformas/steam-1.svg", Epic: "https://cdn2.steamgriddb.com/logo_thumb/ef469da55386b89993b2b644f5ba5140.png",
+  PSN: "https://static.freepnglogo.com/images/all_img/1716830593playstation-Logo-png-white.png", Xbox: "https://static.cdnlogo.com/logos/x/1/xbox.svg"
+}
 
 // Estado dinámico de la app (variables que cambian con la interacción del usuario)
+let portadasUrl;
+let products;
 const datos = [[], [], [], []];
 const filtrosActivos = [];
 let itemFiltrados = [];
 let itemSeleccionados = []; //apartir de button da con el nombre del juego ahi accedo propiedades
 let contadorCarrito = 0;
 let totalCarrito = 0;
+
 
 /* ==========================================================================
    2. SELECCIÓN DE ELEMENTOS DEL DOM (Nodos HTML)
@@ -72,11 +62,7 @@ function tarjetas(arreglo) {
   }
 }
 
-function impresion(elemento, regla) {
-  const url = {
-    Steam: "../img/plataformas/steam-1.svg", Epic: "https://static.cdnlogo.com/logos/e/88/epic-games.svg",
-    PSN: "https://static.cdnlogo.com/logos/p/56/playstation-and-wordmark.svg", Xbox: "https://static.cdnlogo.com/logos/x/1/xbox.svg"
-  }
+async function impresion(elemento, regla) {
   const nombre = elemento.Nombre;
   const plataforma = elemento.Plataforma;
   let precio;
@@ -90,21 +76,33 @@ function impresion(elemento, regla) {
   } else {
     precio = elemento.Precio;
   }
+  const portadaUrl = portadasUrl.find((elementoP) => {
+    if (elementoP.nombre == nombre) {
+      return elementoP.url
+    }
+  })
+
+  const tieneDescuento = !!elemento.Descuento;
+  const descuentoHTMLInventario = tieneDescuento
+    ? `<button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil" disabled>-${descuentoBOTON}%</button>`
+    : '';
+  const descuentoHTMLCarrito = tieneDescuento
+    ? `<button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil" disabled style="width: auto;">-${descuentoBOTON}%</button>`
+    : '';
 
   if (regla == "inventario") {
-    if (elemento.Descuento) {
-      inventario.innerHTML += `
+    inventario.innerHTML += `
     <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
-        <div class="cards-${plataforma.toLowerCase()} overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow ">
+        <div class="cards-${plataforma.toLowerCase()} overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow">
             <div class="d-flex justify-content-center align-items-center">
                 <img class="w-50 img-fluid" src="${url[plataforma]}" alt="${plataforma}">
             </div>
-            <div class="d-flex justify-content-center align-items-center my-2">
-                <img class="rounded-2 w-100 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
+            <div class="d-flex justify-content-center align-items-center my-2 m-2">
+                <img class="rounded-2 img-fluid m-2" src="${portadaUrl.url}" alt="${nombre}">
             </div>
             <p class="fs-5 text-white fw-bold m-0 text-start">${nombre}</p>
             <div class="d-flex justify-content-center align-items-center">
-            <button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil" disabled>-${descuentoBOTON}%</button>
+                ${descuentoHTMLInventario}
             <button class="align-items-center rounded btn btn-outline-info text-decoration-none mt-auto btn-compra ${tamañoBoton}"
                     data-nombre="${nombre}" 
                     data-precio="${precio}"> 
@@ -114,98 +112,35 @@ function impresion(elemento, regla) {
         </div>
     </div>
   `;
-    } else {
-      inventario.innerHTML += `
-    <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
-        <div class="cards-${plataforma.toLowerCase()} overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow ">
-            <div class="d-flex justify-content-center align-items-center">
-                <img class="w-50 img-fluid" src="${url[plataforma]}" alt="${plataforma}">
-            </div>
-            <div class="d-flex justify-content-center align-items-center my-2">
-                <img class="rounded-2 w-100 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
-            </div>
-            <p class="fs-5 text-white fw-bold m-0 text-start">${nombre}</p>
-            <button class="align-items-center rounded btn btn-outline-info text-decoration-none mt-auto btn-compra ${tamañoBoton}"
-                    data-nombre="${nombre}" 
-                    data-precio="${precio}"> 
-                <span class="fs-5 fw-semibold m-0 text-center">$${precio}</span>
-            </button>
-        </div>
-    </div>
-  `;
-    }
   } else {
-    if (elemento.Descuento) {
-      itemsCarrito.innerHTML += `
-      <li class="px-2 py-2 mb-2 border-bottom border-secondary border-opacity-25"
-        style="list-style: none;">
-        <div
-          class="cards-steam overflow-hidden rounded-3 p-2 d-flex align-items-center justify-content-between gap-3 h-100 shadow-sm">
-          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
-            style="width: 75px; height: 75px;">
-            <img class="img-fluid" src="${url[plataforma]}" alt="${plataforma}">
-          </div>
-          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
-            style="width: 50px; height: 40px;">
-            <img class="rounded-1 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
-          </div>
-          <div class="flex-grow-1 text-start">
-            <p class="fs-6 text-white fw-bold m-0 mx-auto"
-              style="max-width: 110px; line-height: 1.2;">${nombre}</p>
-          </div>
-          <button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil" disabled style"width: auto;">-${descuentoBOTON}%</button>
-          <div class="d-flex align-items-center gap-2 flex-shrink-0">
-            <span class="fs-5 text-info fw-semibold"> 
-            $${precio}</span>
-          </div>
-          <button class="d-flex align-items-center gap-2 flex-shrink-0 btn btn-outline-danger btn-eliminar"
-          data-nombre="${nombre}"
-          data-precio="${precio}"> 
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-</svg>
-            
-          </button>
+    itemsCarrito.innerHTML += `
+    <li class="px-2 py-2 mb-2 border-bottom border-secondary border-opacity-25" style="list-style: none;">
+      <div class="cards-steam overflow-hidden rounded-3 p-2 d-flex align-items-center justify-content-between gap-3 h-100 shadow-sm">
+        <div class="d-flex align-items-center justify-content-center flex-shrink-0" style="width: 75px; height: 75px;">
+          <img class="img-fluid" src="${url[plataforma]}" alt="${plataforma}">
         </div>
-      </li>
-  `;
-    } else {
-      itemsCarrito.innerHTML += `
-      <li class="px-2 py-2 mb-2 border-bottom border-secondary border-opacity-25"
-        style="list-style: none;">
-        <div
-          class="cards-steam overflow-hidden rounded-3 p-2 d-flex align-items-center justify-content-between gap-3 h-100 shadow-sm">
-          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
-            style="width: 75px; height: 75px;">
-            <img class="img-fluid" src="${url[plataforma]}" alt="${plataforma}">
-          </div>
-          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
-            style="width: 50px; height: 40px;">
-            <img class="rounded-1 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
-          </div>
-          <div class="flex-grow-1 text-start">
-            <p class="fs-6 text-white fw-bold m-0 text-truncate"
-              style="max-width: 120px; line-height: 1.2;">${nombre}</p>
-          </div>
-          <div class="d-flex align-items-center gap-2 flex-shrink-0">
-            <span class="fs-5 text-info fw-semibold"> 
-            $${precio}</span>
-          </div>
-          <button class="d-flex align-items-center gap-2 flex-shrink-0 btn btn-outline-danger btn-eliminar"
-          data-nombre="${nombre}"
-          data-precio="${precio}">
+        <div class="d-flex align-items-center justify-content-center flex-shrink-0 m-2" style="width: 50px; height: 40px;">
+          <img class="rounded-1 img-fluid m-2" src="${portadaUrl.url}" alt="${nombre}">
+        </div>
+        <div class="flex-grow-1 text-start">
+          <p class="fs-6 text-white fw-bold m-0 ${tieneDescuento ? 'mx-auto' : 'text-truncate'}" 
+             style="max-width: ${tieneDescuento ? '110px' : '120px'}; line-height: 1.2;">${nombre}</p>
+        </div>
+        ${descuentoHTMLCarrito}
+        <div class="d-flex align-items-center gap-2 flex-shrink-0">
+          <span class="fs-5 text-info fw-semibold">$${precio}</span>
+        </div>
+        <button class="d-flex align-items-center gap-2 flex-shrink-0 btn btn-outline-danger btn-eliminar" data-nombre="${nombre}" data-precio="${precio}"> 
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-</svg>
-          </button>
-        </div>
-      </li>
+            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+          </svg>
+        </button>
+      </div>
+    </li>
   `;
-    }
-
   }
+
   localStorage.setItem('itemsCarrito', JSON.stringify(itemsCarrito.innerHTML));
 }
 
@@ -243,10 +178,10 @@ function descuentosFiltro() {
   products.forEach(juego => {
     if (Array.isArray(juego.Genero)) {
       (juego.Genero).forEach(elemento => {
-        if (elemento == "Accion") {
+        if (elemento == "Shooter") {
           juego.Descuento = 33;
           descuentos33.push(juego)
-        } else if (elemento == "Aventura") {
+        } else if (elemento == "Accion") {
           juego.Descuento = 50;
           descuentos50.push(juego)
         } else if (elemento == "Shooter") {
@@ -255,10 +190,10 @@ function descuentosFiltro() {
         }
       });
     } else {
-      if (juego.Genero == "Accion") {
+      if (juego.Genero == "Shooter") {
         juego.Descuento = 33;
         descuentos33.push(juego)
-      } else if (juego.Genero == "Aventura") {
+      } else if (juego.Genero == "Accion") {
         juego.Descuento = 50;
         descuentos50.push(juego)
       } else if (juego.Genero == "Shooter") {
@@ -267,7 +202,35 @@ function descuentosFiltro() {
       }
     }
   });
+  tarjetas(products)
   localStorage.setItem('productos', JSON.stringify(products));
+}
+
+async function jsonProductos() {
+  // 2. Usamos 'await' para pausar la ejecución hasta que el archivo descargue
+  const respuesta = await fetch('../database/productos.json');
+  // 3. Volvemos a usar 'await' para esperar la conversión a objeto de JS
+  const videojuegos = await respuesta.json();
+  return videojuegos;
+}
+
+async function fotoProductos() {
+  // 2. Usamos 'await' para pausar la ejecución hasta que el archivo descargue
+  const respuesta = await fetch('../database/games_appid.json');
+  // 3. Volvemos a usar 'await' para esperar la conversión a objeto de JS
+  const videojuegos = await respuesta.json();
+  // Variable appI
+  let portadas = [];
+  // ⚙️ Convertimos el arreglo en un Map usando el appid como clave
+  products.forEach(productos => {
+    videojuegos.forEach(elemento => {
+      if (elemento.name == productos.Nombre) {
+        const url = `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${elemento.appid}/library_600x900.jpg`
+        portadas.push({ nombre: elemento.name, url: url })
+      }
+    })
+  })
+  return portadas;
 }
 
 /* ==========================================================================
@@ -275,36 +238,43 @@ function descuentosFiltro() {
    ========================================================================== */
 // Lógica pura de negocios (filtrar datos, cálculos matemáticos, etc.)
 
-ordenamiento(datos[0], "Nombre");
-ordenamiento(datos[1], "Genero");
-ordenamiento(datos[2], "Precio");
-ordenamiento(datos[3], "Plataforma");
-
 function ordenamiento(arreglo, propiedad) {
-  products.map((elemento) => {
-    const actual = elemento[propiedad];
-    if (Array.isArray(elemento[propiedad])) {
-      actual.forEach(genero => {
-        const borrar = arreglo.findIndex((elemento) => elemento == genero);
-        if (borrar === -1) {
-          arreglo.push(genero);
-        }
-      })
+  for (let i = 0; i < 4; i++) {
+    arreglo = datos[i];
+    if (i == 0) {
+      propiedad = "Nombre";
+    } else if (i == 1) {
+      propiedad = "Genero";
+    } else if (i == 2) {
+      propiedad = "Precio";
+    } else if (i == 3) {
+      propiedad = "Plataforma";
     }
-    const borrar = arreglo.findIndex((elemento) => elemento == actual);
-
-    // accion
-    if (borrar === -1) {
-      if (typeof actual == "string") {
-        arreglo.push(actual);
-      } else if (typeof actual == "number") {
-        arreglo.push(actual);
-        arreglo.sort(function (a, b) {
-          return a - b;
-        });
+    products.map((elemento) => {
+      let actual = elemento[propiedad];
+      if (Array.isArray(elemento[propiedad])) {
+        actual.forEach(genero => {
+          const borrar = arreglo.findIndex((elemento) => elemento == genero);
+          if (borrar === -1) {
+            arreglo.push(genero);
+          }
+        })
       }
-    }
-  });
+      const borrar = arreglo.findIndex((elemento) => elemento == actual);
+
+      // accion
+      if (borrar === -1) {
+        if (typeof actual == "string") {
+          arreglo.push(actual);
+        } else if (typeof actual == "number") {
+          arreglo.push(actual);
+          arreglo.sort(function (a, b) {
+            return a - b;
+          });
+        }
+      }
+    });
+  }
 }
 
 function comprobacion(propiedad) {
@@ -440,13 +410,16 @@ if (inventario) {
   });
 }
 
+
 /* ==========================================================================
    6. INICIALIZACIÓN DE LA APLICACIÓN (Punto de arranque)
    ========================================================================== */
 // Código que se ejecuta apenas se termina de cargar la página para que la tienda no empiece vacía
-
 if (inventario) {
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
+    products = await jsonProductos();
+    portadasUrl = await fotoProductos();
+    ordenamiento();
     descuentosFiltro();
     tarjetas(products);
     filtrado(datos);
@@ -456,16 +429,19 @@ if (inventario) {
 if (pagina3) {
   const textoCheckout = document.getElementById('VXvoGIf1A');
   const itemsCheckout = document.getElementById('VXvoGIf1B');
+  const formulario = document.getElementById('formulario-checkout');
   // 1. Intentamos levantar la información del LocalStorage
   const productos = localStorage.getItem('productos');
   const item = localStorage.getItem('itemSeleccionados');
   const itemCarrito = localStorage.getItem('itemsCarrito');
   const precioTotalCarrito = localStorage.getItem('precioCarritoTotal');
+  const portadas = localStorage.getItem('portadasUrl');
   // 2. Inicializamos las variables con un fallback por si están vacías (Evitamos cortocircuitos)
   let productosCheckout = productos ? JSON.parse(productos) : [];
   let arregloItems = item ? JSON.parse(item) : [];
   let precioTotal = precioTotalCarrito ? JSON.parse(precioTotalCarrito) : 0;
   let itemCarro = itemCarrito ? JSON.parse(itemCarrito) : 0;
+  let portadasUrl = portadas ? JSON.parse(portadas) : 0;
   let traba = 0;
   function tarjetasPagina3(arreglo) {
     itemsCheckout.innerHTML = "";
@@ -478,10 +454,6 @@ if (pagina3) {
     }
   }
   function impresionPagina3(elemento) {
-    const url = {
-      Steam: "../img/plataformas/steam-1.svg", Epic: "https://static.cdnlogo.com/logos/e/88/epic-games.svg",
-      PSN: "https://static.cdnlogo.com/logos/p/56/playstation-and-wordmark.svg", Xbox: "https://static.cdnlogo.com/logos/x/1/xbox.svg"
-    }
     const nombre = elemento.Nombre;
     const plataforma = elemento.Plataforma;
     let precio;
@@ -495,6 +467,11 @@ if (pagina3) {
     } else {
       precio = elemento.Precio;
     }
+    const portadaUrl = portadasUrl.find((elementoP) => {
+      if (elementoP.nombre == nombre) {
+        return elementoP.url
+      }
+    })
     if (elemento.Descuento) {
       itemsCheckout.innerHTML += `
       <li class="px-2 py-2 mb-2 border-bottom border-secondary border-opacity-25"
@@ -507,7 +484,7 @@ if (pagina3) {
           </div>
           <div class="d-flex align-items-center justify-content-center flex-shrink-0"
             style="width: 50px; height: 40px;">
-            <img class="rounded-1 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
+            <img class="rounded-1 img-fluid" src="${portadaUrl.url}" alt="${nombre}">
           </div>
           <div class="flex-grow-1 text-start">
             <p class="fs-6 text-white fw-bold m-0 mx-auto"
@@ -542,7 +519,7 @@ if (pagina3) {
           </div>
           <div class="d-flex align-items-center justify-content-center flex-shrink-0"
             style="width: 50px; height: 40px;">
-            <img class="rounded-1 img-fluid" src="../img/juegos/${nombre}.svg" alt="${nombre}">
+            <img class="rounded-1 img-fluid" src="${portadaUrl.url}" alt="${nombre}">
           </div>
           <div class="flex-grow-1 text-start">
             <p class="fs-6 text-white fw-bold m-0 text-truncate"
@@ -581,7 +558,6 @@ if (pagina3) {
   }
   textoCheckout.addEventListener('click', (event) => {
     const boton = event.target.closest('.btn-eliminar');
-    console.log(boton)
     const carritoTotal = document.getElementById('total-carrito-3');
     if (boton) {
       const juego = boton.dataset.nombre;
@@ -595,4 +571,62 @@ if (pagina3) {
       }
     }
   });
+  formulario.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const nombre = document.getElementById('input-nombre');
+    const apellido = document.getElementById('input-apellido');
+    const dni = document.getElementById('input-dni');
+    const pedido = {
+      comprador: {
+        nombre: nombre.value,
+        apellido: apellido.value,
+        dni: dni.value
+      },
+      items: arregloItems, // Los juegos que tenías en LocalStorage
+      total: precioTotal,  // El subtotal calculado
+      fecha: new Date().toLocaleString()
+    }
+    Swal.fire({
+      title: '¡Compra Finalizada!',
+      html: `
+    <div class="text-start">
+        <p><strong>Cliente:</strong> ${pedido.comprador.nombre} ${pedido.comprador.apellido}</p>
+        <p><strong>DNI:</strong> ${pedido.comprador.dni}</p>
+        <hr>
+        <h6>Artículos:</h6>
+        <ul class="list-unstyled">
+        ${arregloItems.map(juego => {
+        // 1. Buscamos el objeto del juego completo en la base de datos usando .find()
+        const juegoEncontrado = productosCheckout.find(element => element.Nombre === juego);
+
+        // 2. Calculamos el precio en una variable limpia fuera del string
+        let precioFinal = 0;
+        if (juegoEncontrado) {
+          if (juegoEncontrado.Descuento) {
+            let ahorro = juegoEncontrado.Precio * (1 - (juegoEncontrado.Descuento / 100));
+            precioFinal = Math.round(ahorro);
+          } else {
+            precioFinal = juegoEncontrado.Precio;
+          }
+        }
+
+        // 3. Ahora que tenemos el precio real, retornamos el string HTML limpio
+        return `<li>🎮 ${juego} - $${precioFinal}</li>`;
+      }).join('')}
+        </ul>
+        <hr>
+        <h5>Total: <span class="text-info">$${precioTotal}</span></h5>
+    </div>
+  `,
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#0dcaf0' // El color celeste (btn-info) que combina con tu interfaz
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Cuando el usuario hace clic en "Aceptar", se limpia el storage y se redirige
+        localStorage.clear();
+        window.location.href = '../index.html';
+      }
+    });
+  })
 }

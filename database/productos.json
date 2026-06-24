@@ -1,0 +1,56 @@
+[
+  {
+    "Nombre": "Grand Theft Auto V Enhanced",
+    "Precio": 5,
+    "Genero": "Accion",
+    "Plataforma": "Steam"
+  },
+  {
+    "Nombre": "Cyberpunk 2077",
+    "Precio": 30,
+    "Genero": [
+      "RPG",
+      "Accion"
+    ],
+    "Plataforma": "Steam"
+  },
+  {
+    "Nombre": "The Last of Us™ Part I",
+    "Precio": 70,
+    "Genero": "Aventura",
+    "Plataforma": "PSN"
+  },
+  {
+    "Nombre": "God of War Ragnarök",
+    "Precio": 60,
+    "Genero": "Accion",
+    "Plataforma": "PSN"
+  },
+  {
+    "Nombre": "Alan Wake",
+    "Precio": 50,
+    "Genero": "Terror",
+    "Plataforma": "Epic"
+  },
+  {
+    "Nombre": "Red Dead Redemption 2",
+    "Precio": 40,
+    "Genero": [
+      "Accion",
+      "Aventura"
+    ],
+    "Plataforma": "Epic"
+  },
+  {
+    "Nombre": "DOOM",
+    "Precio": 40,
+    "Genero": "Shooter",
+    "Plataforma": "Xbox"
+  },
+  {
+    "Nombre": "Forza Horizon 5",
+    "Precio": 45,
+    "Genero": "Carreras",
+    "Plataforma": "Xbox"
+  }
+]
