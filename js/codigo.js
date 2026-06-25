@@ -307,9 +307,9 @@ function FiltrosActivos(actual, extra) {
   if (filtrosActivos.length == 0) {
     filtrosActivados.innerHTML = "";
     tarjetas(products);
-  } else if (itemFiltrados.length == 0){
+  } else if (itemFiltrados.length == 0) {
     // Si a pesar de todo itemFiltrados esta vacio, devolvemos NO HAY COINCIDENCIAS en pagina
-    inventario.innerHTML =`
+    inventario.innerHTML = `
     <p class="d-flex text-center fs-3 justify-content-center text-white fw-bold">NO HAY COINCIDENCIAS</p>`
   }
 }
@@ -590,7 +590,7 @@ if (pagina3) {
     const boton = event.target.closest('.btn-eliminar');
     const carritoTotal = document.getElementById('total-carrito-3');
     if (boton) {
-        // Tomamos el nombre del juego y el precio 
+      // Tomamos el nombre del juego y el precio 
       const juego = boton.dataset.nombre;
       const precio = boton.dataset.precio;
       const borrar = arregloItems.findIndex((elemento) => elemento == juego)
@@ -621,14 +621,15 @@ if (pagina3) {
         apellido: apellido.value,
         dni: dni.value
       },
-      items: arregloItems, 
-      total: precioTotal,  
+      items: arregloItems,
+      total: precioTotal,
       fecha: new Date().toLocaleString()
     }
-    // Utilizamos la alerta Swal de la libreria externa SweetAlert
-    Swal.fire({
-      title: '¡Compra Finalizada!',
-      html: `
+    if (arregloItems.length > 0) {
+      // Utilizamos la alerta Swal de la libreria externa SweetAlert
+      Swal.fire({
+        title: '¡Compra Finalizada!',
+        html: `
     <div class="text-start">
         <p><strong>Cliente:</strong> ${pedido.comprador.nombre} ${pedido.comprador.apellido}</p>
         <p><strong>DNI:</strong> ${pedido.comprador.dni}</p>
@@ -636,37 +637,38 @@ if (pagina3) {
         <h6>Artículos:</h6>
         <ul class="list-unstyled">
         ${arregloItems.map(juego => {
-        // 1. Buscamos el objeto del juego completo en la base de datos usando .find()
-        const juegoEncontrado = productosCheckout.find(element => element.Nombre === juego);
+          // 1. Buscamos el objeto del juego completo en la base de datos usando .find()
+          const juegoEncontrado = productosCheckout.find(element => element.Nombre === juego);
 
-        // 2. Calculamos el precio en una variable limpia fuera del string
-        let precioFinal = 0;
-        if (juegoEncontrado) {
-          if (juegoEncontrado.Descuento) {
-            let ahorro = juegoEncontrado.Precio * (1 - (juegoEncontrado.Descuento / 100));
-            precioFinal = Math.round(ahorro);
-          } else {
-            precioFinal = juegoEncontrado.Precio;
+          // 2. Calculamos el precio en una variable limpia fuera del string
+          let precioFinal = 0;
+          if (juegoEncontrado) {
+            if (juegoEncontrado.Descuento) {
+              let ahorro = juegoEncontrado.Precio * (1 - (juegoEncontrado.Descuento / 100));
+              precioFinal = Math.round(ahorro);
+            } else {
+              precioFinal = juegoEncontrado.Precio;
+            }
           }
-        }
 
-        // 3. Ahora que tenemos el precio real, retornamos el string HTML limpio
-        return `<li>${juego} - $${precioFinal}</li>`;
-      }).join('')}
+          // 3. Ahora que tenemos el precio real, retornamos el string HTML limpio
+          return `<li>${juego} - $${precioFinal}</li>`;
+        }).join('')}
         </ul>
         <hr>
         <h5>Total: <span class="text-info">$${precioTotal}</span></h5>
     </div>
   `,
-      icon: 'success',
-      confirmButtonText: 'Aceptar',
-      confirmButtonColor: '#0dcaf0'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Cuando el usuario hace clic en "Aceptar", se limpia el localStorage y te redirige a la pagina principal
-        localStorage.clear();
-        window.location.href = '../index.html';
-      }
-    });
+        icon: 'success',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#0dcaf0'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Cuando el usuario hace clic en "Aceptar", se limpia el localStorage y te redirige a la pagina principal
+          localStorage.clear();
+          window.location.href = '../index.html';
+        }
+      });
+    }
   })
 }
