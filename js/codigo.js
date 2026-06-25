@@ -1,35 +1,35 @@
 /* ==========================================================================
    1. VARIABLES GLOBAL / ESTADO DE LA APLICACIÓN
    ========================================================================== */
-// Datos estáticos o configuraciones
+
+// Arreglo descuentos
 const descuentos = [
   { Descuento: 33, juegos: [] },
   { Descuento: 50, juegos: [] },
   { Descuento: 75, juegos: [] },
   { Descuento: 80, juegos: [] },
 ]
+// Arreglo url que contiene imagenes de las plataformas
 const url = {
-  Steam: "../img/plataformas/steam-1.svg", Epic: "https://cdn2.steamgriddb.com/logo_thumb/ef469da55386b89993b2b644f5ba5140.png",
+  Steam: "./img/plataformas/steam-1.svg", Epic: "https://cdn2.steamgriddb.com/logo_thumb/ef469da55386b89993b2b644f5ba5140.png",
   PSN: "https://static.freepnglogo.com/images/all_img/1716830593playstation-Logo-png-white.png", Xbox: "https://static.cdnlogo.com/logos/x/1/xbox.svg"
 }
+// Arreglo datos que contiene Generos, Nombres, Precios y Plataforma
+const datos = [[], [], [], []];
 
-// Estado dinámico de la app (variables que cambian con la interacción del usuario)
+// Variables dinamicas
 let portadasUrl;
 let products;
-const datos = [[], [], [], []];
-const filtrosActivos = [];
+let filtrosActivos = [];
 let itemFiltrados = [];
-let itemSeleccionados = []; //apartir de button da con el nombre del juego ahi accedo propiedades
+let itemSeleccionados = [];
 let contadorCarrito = 0;
 let totalCarrito = 0;
 
-
-/* ==========================================================================
-   2. SELECCIÓN DE ELEMENTOS DEL DOM (Nodos HTML)
-   ========================================================================== */
-// Agrupá todos los document.getElementById o querySelector acá arriba
+// Selectores que almacenas elementos DOM apartir de Id
 const inventario = document.getElementById('EymrNHzbVl')
 const filtros = document.getElementById('filtros');
+const filtrosActivados = document.getElementById('filtros-activos');
 const listaGeneros = document.getElementById('f-generos');
 const listaPrecio = document.getElementById('f-precio');
 const listaPlataforma = document.getElementById('f-plataforma');
@@ -40,10 +40,8 @@ const CantidadCarrito = document.getElementById('cantidad-items-carrito');
 const itemsCarrito = document.getElementById('items-carrito');
 const carritoTotal = document.getElementById('total-carrito');
 const pagina3 = document.getElementById('pagina3');
-/* ==========================================================================
-   3. LOGICA PRINCIPAL / RENDERIZADO (Funciones que dibujan en pantalla)
-   ========================================================================== */
-// Función encargada exclusivamente de pintar las tarjetas en el HTML
+
+// Funcion que toma los arreglos y los manda a la funcion impresion
 function tarjetas(arreglo) {
   if (arreglo !== itemSeleccionados && arreglo[1] !== "borrar-carrito") {
     inventario.innerHTML = "";
@@ -62,7 +60,9 @@ function tarjetas(arreglo) {
   }
 }
 
-async function impresion(elemento, regla) {
+// Funcion que toma elementos de tarjetas, toma todas las propiedades
+function impresion(elemento, regla) {
+  // Define propiedades en contantes y defino variables dinamicas que cambian si existe elemento.descuento 
   const nombre = elemento.Nombre;
   const plataforma = elemento.Plataforma;
   let precio;
@@ -76,35 +76,38 @@ async function impresion(elemento, regla) {
   } else {
     precio = elemento.Precio;
   }
+
+  //Busca en el arreglo portadasUrl el nombre del elemento y devuelve la portada del producto por url de navegador
   const portadaUrl = portadasUrl.find((elementoP) => {
     if (elementoP.nombre == nombre) {
       return elementoP.url
     }
   })
 
-
+  // tieneDescuento distinto de null si existe elemento.Descuento
   const tieneDescuento = !!elemento.Descuento;
   const descuentoHTMLInventario = tieneDescuento
-    ? `<button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil" disabled>-${descuentoBOTON}%</button>`
+    ? `<button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil m-1" style="width: 55px;" disabled>-${descuentoBOTON}%</button>`
     : '';
   const descuentoHTMLCarrito = tieneDescuento
-    ? `<button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil" disabled style="width: auto;">-${descuentoBOTON}%</button>`
+    ? `<button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil m-1" disabled style="width: 55px;">-${descuentoBOTON}%</button>`
     : '';
 
+  // Condicional que diferencia de impresion de objetos en pagina principal o en el Carrito   
   if (regla == "inventario") {
     inventario.innerHTML += `
-    <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
-        <div class="cards-${plataforma.toLowerCase()} overflow-hidden rounded-4 p-3 d-flex flex-column gap-2 h-100 shadow">
+    <div class="col-12 col-sm-6 col-md-6 col-lg-3 mb-4 d-flex align-items-stretch">
+        <div class="shadow-cards1 cards-steam overflow-hidden rounded-4 p-4 d-flex flex-column gap-2">
             <div class="d-flex justify-content-center align-items-center">
-                <img class="w-50 img-fluid" src="${url[plataforma]}" alt="${plataforma}">
+            <img class="img-fluid" src="${url[plataforma]}" alt="${plataforma}" style="width: 100%; height: 35px; object-fit: contain;"></img>
             </div>
-            <div class="d-flex justify-content-center align-items-center my-2 m-2">
+            <div class="d-flex justify-content-center align-text-bottom my-2 m-2">
                 <img class="rounded-2 img-fluid m-2" src="${portadaUrl.url}" alt="${nombre}">
             </div>
-            <p class="fs-5 text-white fw-bold m-0 text-start">${nombre}</p>
-            <div class="d-flex justify-content-center align-items-center">
+            <p class="fs-5 text-white fw-bold m-0 text-center">${nombre}</p>
+            <div class="d-flex justify-content-center align-text-bottom">
                 ${descuentoHTMLInventario}
-            <button class="align-items-center rounded btn btn-outline-info text-decoration-none mt-auto btn-compra ${tamañoBoton}"
+            <button class=" rounded btn  btn-outline-info text-decoration-none mt-auto btn-compra ${tamañoBoton}"
                     data-nombre="${nombre}" 
                     data-precio="${precio}"> 
                 <span class="fs-5 fw-semibold m-0 text-center">$${precio}</span>
@@ -116,12 +119,12 @@ async function impresion(elemento, regla) {
   } else {
     itemsCarrito.innerHTML += `
     <li class="px-2 py-2 mb-2 border-bottom border-secondary border-opacity-25" style="list-style: none;">
-      <div class="cards-steam overflow-hidden rounded-3 p-2 d-flex align-items-center justify-content-between gap-3 h-100 shadow-sm">
-        <div class="d-flex align-items-center justify-content-center flex-shrink-0" style="width: 75px; height: 75px;">
+      <div class="shadow-cards cards-steam overflow-hidden rounded-3 p-2 d-flex align-items-center justify-content-between gap-3 h-100 shadow-sm">
+        <div class="d-flex align-items-center justify-content-center flex-shrink-0 m-1" style="width: 65px; object-fit: contain;">
           <img class="img-fluid" src="${url[plataforma]}" alt="${plataforma}">
         </div>
-        <div class="d-flex align-items-center justify-content-center flex-shrink-0 m-2" style="width: 50px; height: 40px;">
-          <img class="rounded-1 img-fluid m-2" src="${portadaUrl.url}" alt="${nombre}">
+        <div class="d-flex align-items-center justify-content-center flex-shrink-0 my-3" style="width: 50px; height: 40px;">
+          <img class="rounded-2 img-fluid" src="${portadaUrl.url}" alt="${nombre}">
         </div>
         <div class="flex-grow-1 text-start">
           <p class="fs-6 text-white fw-bold m-0 ${tieneDescuento ? 'mx-auto' : 'text-truncate'}" 
@@ -145,10 +148,11 @@ async function impresion(elemento, regla) {
   localStorage.setItem('itemsCarrito', JSON.stringify(itemsCarrito.innerHTML));
 }
 
+// Funcion que introduce los datos y descuentos dinamicos en los dropdown de Filtros
 function filtrado(datos) {
   datos[1].forEach((elemento) => {
     listaGeneros.innerHTML += `
-        <li><label class="dropdown-item"><input type="checkbox" value="${elemento}"> ${elemento}</label></li>
+        <li><label class="dropdown-item"><input type="radio" name="generos-unico"value="${elemento}"> ${elemento}</label></li>
     `;
   })
   datos[2].forEach((elemento) => {
@@ -170,7 +174,9 @@ function filtrado(datos) {
   })
 }
 
+// Funcion que toma el arreglo original de productos y le asigna dinamicamente descuentos
 function descuentosFiltro() {
+  // Se pueden introducir descuentos de 33%, 50%, 75% y 80%
   descuentos33 = descuentos[0].juegos;
   descuentos50 = descuentos[1].juegos;
   descuentos75 = descuentos[2].juegos;
@@ -204,23 +210,24 @@ function descuentosFiltro() {
     }
   });
   tarjetas(products)
+
+  // Mandamos al localStorage el arreglo products para ser utilizado en la page Checkout
   localStorage.setItem('productos', JSON.stringify(products));
 }
 
+// Funcion asincrona que toma el json de productos a través de fetch y lo retorna cuando este disponible respuesta.json()
 async function jsonProductos() {
-  // 2. Usamos 'await' para pausar la ejecución hasta que el archivo descargue
   const respuesta = await fetch('./database/productos.json');
-  // 3. Volvemos a usar 'await' para esperar la conversión a objeto de JS
   const videojuegos = await respuesta.json();
   return videojuegos;
 }
 
+// Funcion asincrona que toma el json de appid de Steam
 async function fotoProductos() {
   let portadas = [];
-  // 2. Usamos 'await' para pausar la ejecución hasta que el archivo descargue
   const respuesta = await fetch('./database/games_appid.json');
-  // 3. Volvemos a usar 'await' para esperar la conversión a objeto de JS
   const videojuegos = await respuesta.json();
+  // Recorremos productos y si elemento.name == productos.Nombre introducimos nombre y url de la portada del juego en el arreglo Portadas
   products.forEach(productos => {
     videojuegos.forEach(elemento => {
       if (elemento.name == productos.Nombre) {
@@ -229,14 +236,86 @@ async function fotoProductos() {
       }
     })
   })
+  //Devolvemos portadas
   return portadas;
 }
 
-/* ==========================================================================
-   4. FUNCIONES AUXILIARES / FILTRADO / MANEJO DE ESTADO
-   ========================================================================== */
-// Lógica pura de negocios (filtrar datos, cálculos matemáticos, etc.)
+// Funcion que devuelve items que coincidan con los filtros seleccionados
+function FiltrosActivos(actual, extra) {
 
+  // Dato es igual al tipo de dato que puede ser actual, "Plataforma", "Precio", "Descuento", "Genero"
+  dato = comprobacion(actual);
+
+  if (["Plataforma", "Precio", "Descuento", "Genero"].includes(dato)) {
+    filtrosActivos.forEach((elemento, indice) => {
+      if (comprobacion(elemento) === dato) {
+        filtrosActivos.splice(indice, 1)
+      }
+    })
+  }
+
+  // Buscamos si en filtrosActivos se encuenta actual a traves del metodo findIndex
+  const borrar = filtrosActivos.findIndex((elemento) => elemento == actual);
+  if (borrar == -1) {
+    // Actual no existe, lo introducimos en filtrosActivos y reiniciamos filtrosActivados
+    filtrosActivados.innerHTML = "";
+    filtrosActivos.push(actual);
+  } else {
+    // Actual existe, lo eliminamos del arreglo
+    filtrosActivos.splice(borrar, 1);
+  }
+
+  // Si filtros activos tiene un elemento, imprimimos el filtroSeleccionado debajo de los selectores
+  if (filtrosActivos.length == 1) {
+    filtrosActivados.innerHTML += `<div class="d-inline-flex align-items-center gap-2 bg-white text-dark rounded-3 px-3 py-1 shadow-sm border border-light animate__animated animate__fadeIn"
+                style="height: 38px;">
+                <span class="fs-6 fw-bold m-0 valor-filtro"
+                >'${filtrosActivos[0]}'</span>
+                <button type="button" class="btn-close ms-1 btn-eliminar-filtro" style="font-size: 0.65rem; padding: 0;" aria-label="Close"
+                data-filtro="${filtrosActivos[0]}"></button>
+            </div>`;
+  } else {
+    // Si filtrosActivos tiene varios filtros agregamos dinamicamente cada filtroActivo en el selector filtrosActivados
+    filtrosActivos.forEach((elemento) => {
+      filtrosActivados.innerHTML += `<div class="d-inline-flex align-items-center gap-2 bg-white text-dark rounded-3 px-3 py-1 shadow-sm border border-light animate__animated animate__fadeIn"
+                style="height: 38px;">
+                <span class="fs-6 fw-bold m-0">'${elemento}'</span>
+                <button type="button" class="btn-close ms-1 btn-eliminar-filtro" style="font-size: 0.65rem; padding: 0;" aria-label="Close"
+                data-filtro="${filtrosActivos[0]}"></button>
+            </div>`
+    })
+  }
+
+  // Itemfiltrados es igual a los juegos o al juego que cumpla con todos los filtros a traves de metodo every
+  itemFiltrados = products.filter(juego => {
+    return filtrosActivos.every((filtro) => {
+      dato = comprobacion(filtro)
+      if (["Genero", "Plataforma"].includes(dato)) {
+        return juego[dato].includes(filtro)
+      } else if ("Precio" == dato) {
+        return juego[dato] == Number(filtro)
+      } else if ("Descuento" == dato) {
+        return juego[dato] == String(filtro).slice(0, 2)
+      }
+      return juego[dato] === filtro
+    })
+  });
+
+  tarjetas(itemFiltrados)
+
+  // Si a pesar de todo filtrosActivos esta vacios, reiniciamos los productos
+  if (filtrosActivos.length == 0) {
+    filtrosActivados.innerHTML = "";
+    tarjetas(products);
+  } else if (itemFiltrados.length == 0){
+    // Si a pesar de todo itemFiltrados esta vacio, devolvemos NO HAY COINCIDENCIAS en pagina
+    inventario.innerHTML =`
+    <p class="d-flex text-center fs-3 justify-content-center text-white fw-bold">NO HAY COINCIDENCIAS</p>`
+  }
+}
+
+
+// Funcion que rellena automaticamente datos[] para contener las propiedades Nombre, Genero, Precio y Plataforma de manera dinamica
 function ordenamiento(arreglo, propiedad) {
   for (let i = 0; i < 4; i++) {
     arreglo = datos[i];
@@ -276,6 +355,8 @@ function ordenamiento(arreglo, propiedad) {
   }
 }
 
+
+// Esta funcion obtiene el valor de los filtros para devolver que tipo de filtro es
 function comprobacion(propiedad) {
   let tipoPropiedad = "";
   if (!String(propiedad).includes("%")) {
@@ -312,11 +393,10 @@ function comprobacion(propiedad) {
   return tipoPropiedad
 }
 
-/* ==========================================================================
-   5. ESCUCHADORES DE EVENTOS (Event Listeners)
-   ========================================================================== */
-// Captura de clics, inputs, envíos de formularios. Van al final porque llaman a las funciones de arriba.
+
+// Agregamos un condicional para que todos estos elementos solo ocurran en index.html
 if (inventario) {
+  // Evento que controla el numero de items seleccionados para contabilizarlos en la esquina superior derecha del Carrito
   inventario.addEventListener('click', (event) => {
     const boton = event.target.closest('.btn-compra');
     totalCarrito += Number(boton.dataset.precio);
@@ -325,61 +405,32 @@ if (inventario) {
       CantidadCarrito.innerText = contadorCarrito;
       const juego = boton.dataset.nombre;
       carritoTotal.innerText = `$${totalCarrito}`;
+      // Utilizamos localStorage para poder utilizar 'precioCarritoTotal' y 'itemSeleccionados' en el html Checkout
       localStorage.setItem('precioCarritoTotal', JSON.stringify(totalCarrito));
       itemSeleccionados.push(juego);
       localStorage.setItem('itemSeleccionados', JSON.stringify(itemSeleccionados));
       tarjetas(itemSeleccionados);
     }
   });
+  // Evento que detecta la seleccion de un filtro, al detectar el click se llama a la funcion FiltrosActivos()
   filtros.addEventListener('click', (event) => {
     const elemento = event.target;
     if (elemento.tagName == "INPUT") {
       const actual = elemento.value;
-      dato = comprobacion(actual);
-
-      if (["Plataforma", "Precio", "Descuento", "Genero"].includes(dato)) {
-        filtrosActivos.forEach((elemento, indice) => {
-          if (comprobacion(elemento) === dato) {
-            filtrosActivos.splice(indice, 1)
-          }
-        })
-      }
-
-      const borrar = filtrosActivos.findIndex((elemento) => elemento == actual);
-      if (borrar == -1) {
-        filtrosActivos.push(actual);
-      } else {
-        filtrosActivos.splice(borrar, 1);
-      }
-
-      if (filtrosActivos.length == 0) {
-        tarjetas(products);
-        return;
-      }
-
-      itemFiltrados = products.filter(juego => {
-        return filtrosActivos.every((filtro) => {
-          dato = comprobacion(filtro)
-          if (["Genero", "Plataforma"].includes(dato)) {
-            return juego[dato].includes(filtro)
-          } else if ("Precio" == dato) {
-            return juego[dato] == Number(filtro)
-          } else if ("Descuento" == dato) {
-            return juego[dato] == String(filtro).slice(0, 2)
-          }
-
-          return juego[dato] === filtro
-        })
-      });
-
-      if (filtrosActivos.length > 0 && itemFiltrados.length == 0) {
-        inventario.innerHTML = `<p class="fs-1 text-white fw-bold m-0 text-center">No hay coincidencias.</p>`;
-        return;
-      }
-
-      tarjetas(itemFiltrados)
+      FiltrosActivos(actual)
     }
   });
+  // Evento que detecta el boton de eliminar los filtros, borrando por completo los filtrosActivados y reiniciando los productos
+  filtrosActivados.addEventListener('click', (event) => {
+    const boton = event.target.closest('.btn-eliminar-filtro');
+    if (boton) {
+      filtrosActivados.innerHTML = "";
+      filtrosActivos = [];
+      tarjetas(products)
+    }
+  });
+
+  // Funcion para eliminar productos del carrito
   carritoCompleto.addEventListener('click', (event) => {
     const boton = event.target.closest('.btn-eliminar');
     if (contadorCarrito <= 0) {
@@ -396,7 +447,6 @@ if (inventario) {
         itemsCarrito.innerHTML = `<p class="fs-6 text-white fw-bold m-0 text-center">No hay productos</p>`;
         CantidadCarrito.innerText = "";
       }
-
       if (borrar !== -1) {
         itemSeleccionados.splice(borrar, 1)
         totalCarrito -= Number(precio);
@@ -409,13 +459,10 @@ if (inventario) {
   });
 }
 
-
-/* ==========================================================================
-   6. INICIALIZACIÓN DE LA APLICACIÓN (Punto de arranque)
-   ========================================================================== */
 // Código que se ejecuta apenas se termina de cargar la página para que la tienda no empiece vacía
 if (inventario) {
   document.addEventListener('DOMContentLoaded', async () => {
+    // Cargamos products y portadasUrl antes de cargar funciones
     products = await jsonProductos();
     portadasUrl = await fotoProductos();
     localStorage.setItem('portadasUrl', JSON.stringify(portadasUrl));
@@ -426,16 +473,21 @@ if (inventario) {
   });
 }
 
+// Condicional para que se ejecute unicamente en html Checkout
 if (pagina3) {
+
+  // Elementos del DOM de Checkout
   const textoCheckout = document.getElementById('VXvoGIf1A');
   const itemsCheckout = document.getElementById('VXvoGIf1B');
   const formulario = document.getElementById('formulario-checkout');
+
   // 1. Intentamos levantar la información del LocalStorage
   const productos = localStorage.getItem('productos');
   const item = localStorage.getItem('itemSeleccionados');
   const itemCarrito = localStorage.getItem('itemsCarrito');
   const precioTotalCarrito = localStorage.getItem('precioCarritoTotal');
   const portadas = localStorage.getItem('portadasUrl');
+
   // 2. Inicializamos las variables con un fallback por si están vacías (Evitamos cortocircuitos)
   let productosCheckout = productos ? JSON.parse(productos) : [];
   let arregloItems = item ? JSON.parse(item) : [];
@@ -443,6 +495,8 @@ if (pagina3) {
   let itemCarro = itemCarrito ? JSON.parse(itemCarrito) : 0;
   let portadasUrl = portadas ? JSON.parse(portadas) : 0;
   let traba = 0;
+
+  // Creamos nuevamente tarjetas para imprimir pero para el otro HTML
   function tarjetasPagina3(arreglo) {
     itemsCheckout.innerHTML = "";
     for (const item of arreglo) {
@@ -453,6 +507,8 @@ if (pagina3) {
       });
     }
   }
+
+  // Impresion funciona de igual manera que en el index.html, se recrea para ahorra problemas
   function impresionPagina3(elemento) {
     const nombre = elemento.Nombre;
     const plataforma = elemento.Plataforma;
@@ -467,81 +523,52 @@ if (pagina3) {
     } else {
       precio = elemento.Precio;
     }
+    if (url[plataforma] == "./img/plataformas/steam-1.svg") {
+      url[plataforma] = "../img/plataformas/steam-1.svg";
+    }
     const portadaUrl = portadasUrl.find((elementoP) => {
       if (elementoP.nombre == nombre) {
         return elementoP.url
       }
     })
-    if (elemento.Descuento) {
-      itemsCheckout.innerHTML += `
-      <li class="px-2 py-2 mb-2 border-bottom border-secondary border-opacity-25"
-        style="list-style: none;">
-        <div
-          class="cards-steam overflow-hidden rounded-3 p-2 d-flex align-items-center justify-content-between gap-3 h-100 shadow-sm">
-          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
-            style="width: 75px; height: 75px;">
-            <img class="img-fluid" src="${url[plataforma]}" alt="${plataforma}">
-          </div>
-          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
-            style="width: 50px; height: 40px;">
-            <img class="rounded-1 img-fluid" src="${portadaUrl.url}" alt="${nombre}">
-          </div>
-          <div class="flex-grow-1 text-start">
-            <p class="fs-6 text-white fw-bold m-0 mx-auto"
-              style="max-width: 110px; line-height: 1.2;">${nombre}</p>
-          </div>
-          <button class="fs-6 fw-semibold text-black fw-bold text-center rounded fondo-sutil" disabled style"width: auto;">-${descuentoBOTON}%</button>
-          <div class="d-flex align-items-center gap-2 flex-shrink-0">
-            <span class="fs-5 text-info fw-semibold"> 
-            $${precio}</span>
-          </div>
-          <button class="d-flex align-items-center gap-2 flex-shrink-0 btn btn-outline-danger btn-eliminar"
-          data-nombre="${nombre}"
-          data-precio="${precio}"> 
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-</svg>
-            
-          </button>
+    const tieneDescuento = !!elemento.Descuento;
+    const descuentoHTMLInventario = tieneDescuento
+      ? `<button class="fs-5 fw-semibold text-black fw-bold rounded fondo-sutil" style="width: auto;" disabled>-${descuentoBOTON}%</button>`
+      : '';
+    const descuentoHTMLCarrito = tieneDescuento
+      ? `<button class="fs-5 fw-semibold text-black fw-bold rounded fondo-sutil" disabled style="width: auto;">-${descuentoBOTON}%</button>`
+      : '';
+
+    itemsCheckout.innerHTML += `
+    <li class="px-2 py-2 mb-2 border-bottom border-secondary border-opacity-25" style="list-style: none;">
+      <div class="cards-steam overflow-hidden rounded-3 p-2 d-flex align-items-center justify-content-between gap-3 h-100 shadow-sm">
+        <div class="d-flex align-items-center justify-content-center flex-shrink-0 m-1" style="width: 65px; object-fit: contain;">
+          <img class="img-fluid" src="${url[plataforma]}" alt="${plataforma}">
         </div>
-      </li>
-  `;
-    } else if (!elemento.Descuento) {
-      itemsCheckout.innerHTML += `
-      <li class="px-2 py-2 mb-2 border-bottom border-secondary border-opacity-25"
-        style="list-style: none;">
-        <div
-          class="cards-steam overflow-hidden rounded-3 p-2 d-flex align-items-center justify-content-between gap-3 h-100 shadow-sm">
-          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
-            style="width: 75px; height: 75px;">
-            <img class="img-fluid" src="${url[plataforma]}" alt="${plataforma}">
-          </div>
-          <div class="d-flex align-items-center justify-content-center flex-shrink-0"
-            style="width: 50px; height: 40px;">
-            <img class="rounded-1 img-fluid" src="${portadaUrl.url}" alt="${nombre}">
-          </div>
-          <div class="flex-grow-1 text-start">
-            <p class="fs-6 text-white fw-bold m-0 text-truncate"
-              style="max-width: 120px; line-height: 1.2;">${nombre}</p>
-          </div>
-          <div class="d-flex align-items-center gap-2 flex-shrink-0">
-            <span class="fs-5 text-info fw-semibold"> 
-            $${precio}</span>
-          </div>
-          <button class="d-flex align-items-center gap-2 flex-shrink-0 btn btn-outline-danger btn-eliminar"
-          data-nombre="${nombre}"
-          data-precio="${precio}">
+        <div class="d-flex align-items-center justify-content-center flex-shrink-0 my-3" style="width: 50px; height: 40px;">
+          <img class="rounded-2 img-fluid" src="${portadaUrl.url}" alt="${nombre}">
+        </div>
+        <div class="flex-grow-1">
+          <p class="fs-5 text-white fw-bold m-1 text-center d-flex" 
+             style="white-space: nowrap; max-width: ${tieneDescuento ? '110px' : '120px'}; line-height: 1.2;">${nombre}</p>
+        </div>
+        ${descuentoHTMLCarrito}
+        <div class="d-flex align-items-end gap-2 flex-shrink-0">
+          <span class="fs-5 text-info fw-semibold">$${precio}</span>
+        </div>
+        <button class="d-flex align-items-center gap-2 flex-shrink-0 btn btn-outline-danger btn-eliminar" data-nombre="${nombre}" data-precio="${precio}"> 
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-</svg>
-          </button>
-        </div>
-      </li>
+            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+          </svg>
+        </button>
+      </div>
+    </li>
   `;
-    }
   }
+
+  // Condicional para que se ejecute en el arranque una sola vez, por eso traba = 1;
+  // Se inyecta en checkout.html el precio total de los productos
   if (itemsCheckout && traba == 0) {
     traba = 1;
     tarjetasPagina3(arregloItems);
@@ -556,36 +583,49 @@ if (pagina3) {
     `;
     textoCheckout.appendChild(divFooter);
   }
+
+
+  // Si tocamos el boton eliminar items en checkout.html vamos a este evento
   textoCheckout.addEventListener('click', (event) => {
     const boton = event.target.closest('.btn-eliminar');
     const carritoTotal = document.getElementById('total-carrito-3');
     if (boton) {
+        // Tomamos el nombre del juego y el precio 
       const juego = boton.dataset.nombre;
       const precio = boton.dataset.precio;
       const borrar = arregloItems.findIndex((elemento) => elemento == juego)
       if (borrar !== -1) {
+        // Si el juego se encuento dentro de arregloItems lo borramos
         arregloItems.splice(borrar, 1)
         precioTotal -= Number(precio);
+        // Actualizamos el precio total
         carritoTotal.innerText = `$${precioTotal}`;
+        // Volvemos a llamar tarjetas para renderizar los items que no fueron eliminados
         tarjetasPagina3(arregloItems);
       }
     }
   });
+
+  // Creamos el evento formulario para tomar los datos cuando se finaliza la compra
   formulario.addEventListener('submit', (event) => {
+    // Utilizamos PreventDefault para ignorar la reaccion original del Evento
     event.preventDefault();
+    // Tomamos del DOM las variables introducidas de nombre, apellido y dni
     const nombre = document.getElementById('input-nombre');
     const apellido = document.getElementById('input-apellido');
     const dni = document.getElementById('input-dni');
+    // Creamos variable pedido con 4 propiedades, datos del comprador, los items que compro, el total de los items y la fecha de compra
     const pedido = {
       comprador: {
         nombre: nombre.value,
         apellido: apellido.value,
         dni: dni.value
       },
-      items: arregloItems, // Los juegos que tenías en LocalStorage
-      total: precioTotal,  // El subtotal calculado
+      items: arregloItems, 
+      total: precioTotal,  
       fecha: new Date().toLocaleString()
     }
+    // Utilizamos la alerta Swal de la libreria externa SweetAlert
     Swal.fire({
       title: '¡Compra Finalizada!',
       html: `
@@ -611,7 +651,7 @@ if (pagina3) {
         }
 
         // 3. Ahora que tenemos el precio real, retornamos el string HTML limpio
-        return `<li>🎮 ${juego} - $${precioFinal}</li>`;
+        return `<li>${juego} - $${precioFinal}</li>`;
       }).join('')}
         </ul>
         <hr>
@@ -620,10 +660,10 @@ if (pagina3) {
   `,
       icon: 'success',
       confirmButtonText: 'Aceptar',
-      confirmButtonColor: '#0dcaf0' // El color celeste (btn-info) que combina con tu interfaz
+      confirmButtonColor: '#0dcaf0'
     }).then((result) => {
       if (result.isConfirmed) {
-        // Cuando el usuario hace clic en "Aceptar", se limpia el storage y se redirige
+        // Cuando el usuario hace clic en "Aceptar", se limpia el localStorage y te redirige a la pagina principal
         localStorage.clear();
         window.location.href = '../index.html';
       }

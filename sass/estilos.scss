@@ -1,11 +1,9 @@
-/* Box sizing rules */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-/* Remove default margin */
 body,
 h1,
 h2,
@@ -42,12 +40,14 @@ header {
     font-family: "Roboto Condensed", sans-serif;
     color: #e4a553;
     text-decoration: none;
+    font-weight: 900;
   }
 
-  a {
+  button {
     font-family: "Roboto Condensed", sans-serif;
     color: #000000;
     text-decoration: none;
+    font-weight: 900;
   }
 
   .texto-header {
@@ -55,12 +55,14 @@ header {
     color: #ffffff;
     text-shadow: 4px 3px #000000;
     font-size: 1.3em;
+    font-weight: 900;
   }
 
   .titulo {
     font-family: "Roboto Condensed", sans-serif;
     text-shadow: 5px 5px #590061;
     font-size: 2.1rem;
+    font-weight: 900;
   }
 
 }
@@ -72,6 +74,7 @@ footer {
     font-family: "Roboto Condensed", sans-serif;
     color: large;
     text-align: center;
+    font-weight: 900;
   }
 }
 
@@ -175,4 +178,33 @@ footer {
   background:
     radial-gradient(circle at top right, rgba(102, 192, 244, .15), transparent 35%),
     linear-gradient(135deg, #171a21 0%, #2958d1 50%, #0d537e 100%);
+}
+
+.fondo-tienda {
+  background:
+    radial-gradient(circle at top right, rgba(102, 192, 244, .15), transparent 35%),
+    linear-gradient(135deg, #374361 5%, #0c2666 100%);
+}
+
+.tarjeta-juego p,
+.cards-steam p,
+.cards-psn p,
+.cards-epic p {
+  display: block;
+  min-height: 44px;
+  /* Espacio exacto para que entren hasta 2 líneas de texto */
+  margin-bottom: 10px;
+  /* Separación limpia con los botones de abajo */
+  white-space: normal;
+  /* Asegura que el texto pueda saltar de línea si es largo */
+}
+
+.shadow-cards {
+  -webkit-box-shadow: 0px -1px 30px -19px #FFFFFF;
+  box-shadow: 0px -1px 30px -19px #FFFFFF;
+}
+
+.shadow-cards1 {
+  -webkit-box-shadow: 2px 3px 6px 4px #ffffff;
+  box-shadow: 2px 3px 6px 4px #000000;
 }

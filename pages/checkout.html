@@ -35,7 +35,7 @@
 
     <main id="pagina3" class="overflow-hidden">
         <div class="d-flex justify-content-between align-content-center row-cols-3 p-2 m-5">
-            <div class="border bg-white border-secondary rounded m-2 col-7">
+            <div class="border bg-white border-secondary rounded m-2 col-7 ">
                 <div id="VXvoGIf1A" class="rounded p-3">
                     <p class="fs-3 d-flex justify-content-center align-items-center text-dark fw-semibold">Productos
                         totales</p>
@@ -43,30 +43,30 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-white border rounded m-4">
+            <div class="bg-white border rounded m-4 shadow-cards1">
                 <form id="formulario-checkout" class="p-4 mt-2">
                     <div class="mt-5 row mb-3">
                         <div class="col-6">
                             <label for="input-nombre" class="form-label fw-semibold">Nombre</label>
-                            <input type="text" id="input-nombre" name="nombre" class="form-control"
-                                placeholder="Ej: Enzo" required>
+                            <input type="text" id="input-nombre" name="nombre" class="form-control border border-dark"
+                                 required>
                         </div>
 
                         <div class="col-6">
                             <label for="input-apellido" class="form-label fw-semibold">Apellido</label>
-                            <input type="text" id="input-apellido" name="apellido" class="form-control"
-                                placeholder="Ej: Pérez" required>
+                            <input type="text" id="input-apellido" name="apellido" class="form-control border border-dark"
+                                 required>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="input-dni" class="form-label fw-semibold">DNI</label>
-                        <input type="text" id="input-dni" name="dni" class="form-control"
-                            placeholder="Sin puntos, ej: 42123456" pattern="\d{7,8}"
+                        <input type="text" id="input-dni" name="dni" class="form-control border border-dark"
+                            placeholder="Sin puntos." pattern="\d{7,8}"
                             title="El DNI debe contener entre 7 y 8 dígitos numéricos sin puntos." required>
                     </div>
                     <input type="submit" value="Finalizar compra"
-                        class="btn btn-info col-12 fw-bold text-dark rounded text-decoration-none">
+                        class="shadow-cards fondo-checkout rounded-1 btn btn-info col-12 fw-bold text-white text-decoration-none">
                 </form>
             </div>
         </div>
